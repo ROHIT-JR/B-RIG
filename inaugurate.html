@@ -135,7 +135,7 @@ body.open .curtain .r{transform:translateX(101%)}
 
 <div class="splash" aria-live="polite">
   <img class="mark" src="assets/img/logos/brig-mark.png" alt="">
-  <h1>B&#8209;RIG is <em>live</em></h1>
+  <h1>BlockCatalyst <em>2026</em> is live</h1>
   <p class="sub">Opening the website&hellip;</p>
 </div>
 
@@ -372,7 +372,7 @@ body.open .curtain .r{transform:translateX(101%)}
     setTimeout(function () { document.body.classList.add('open'); }, 80);
     setTimeout(function () { burst(); }, 900);
     setTimeout(function () { document.querySelector('.curtain').style.display = 'none'; }, 2600);
-    setTimeout(function () { location.replace('index.html'); }, 4800);
+    setTimeout(function () { location.replace('blockcatalyst.html'); }, 4800);
     document.querySelector('.curtain').style.pointerEvents = 'none';
   }
 
@@ -417,7 +417,7 @@ body.open .curtain .r{transform:translateX(101%)}
     else if (k === 'f') fs();
     else if (k === 'm') $('#bMute').click();
     else if (k === 'r') restart();
-    else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); location.href = 'index.html'; }
+    else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); location.href = 'blockcatalyst.html'; }
   });
 })();
 </script>
