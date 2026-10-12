@@ -67,7 +67,7 @@ h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;back
 .hint{font:400 12px/1.5 var(--mono);color:var(--dim)}
 
 /* keyholders */
-.keys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;width:100%}
+.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;max-width:820px}
 .key{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 8px;
   border:1px solid var(--line);border-radius:16px;background:var(--surface);transition:.25s}
 .key svg{width:34px;height:34px;fill:none;stroke:var(--dim);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:.25s}
@@ -111,7 +111,14 @@ body.live .curtain{visibility:visible}
 .curtain .r{border-left:2px solid var(--teal)}
 body.open .curtain .l{transform:translateX(-101%)}
 body.open .curtain .r{transform:translateX(101%)}
-#fx{position:fixed;inset:0;z-index:30;pointer-events:none}
+.ring{position:fixed;left:50%;top:50%;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:50%;z-index:30;pointer-events:none;
+  border:1.5px solid var(--teal);box-shadow:0 0 40px rgba(44,196,179,.35),inset 0 0 30px rgba(44,196,179,.15);
+  opacity:0;animation:ring 2.4s cubic-bezier(.2,.6,.2,1) forwards}
+@keyframes ring{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(26)}}
+.curtain .l::after,.curtain .r::after{content:"";position:absolute;top:0;bottom:0;width:60px;pointer-events:none}
+.curtain .l{position:relative}.curtain .r{position:relative}
+.curtain .l::after{right:0;background:linear-gradient(90deg,transparent,rgba(44,196,179,.35))}
+.curtain .r::after{left:0;background:linear-gradient(270deg,transparent,rgba(44,196,179,.35))}
 .banner{position:fixed;left:50%;bottom:clamp(18px,5vh,48px);transform:translateX(-50%) translateY(30px);z-index:31;opacity:0;
   background:rgba(4,18,27,.92);border:1px solid var(--teal);border-radius:999px;padding:14px 26px;font:600 clamp(13px,2vh,18px)/1.2 var(--mono);
   color:var(--text);transition:.7s;white-space:nowrap;box-shadow:0 0 50px rgba(44,196,179,.3)}
@@ -119,8 +126,7 @@ body.open .curtain .r{transform:translateX(101%)}
 .banner.on{opacity:1;transform:translateX(-50%)}
 
 @media (max-width:700px){
-  .keys{grid-template-columns:repeat(2,1fr)}
-  .keys .key:last-child{grid-column:1/-1}
+  .keys{grid-template-columns:1fr}
   .stage{align-items:start;padding-top:70px;overflow:auto}
   .banner{white-space:normal;text-align:center;width:calc(100% - 28px);border-radius:18px}
 }
@@ -129,7 +135,7 @@ body.open .curtain .r{transform:translateX(101%)}
 </head>
 <body>
 
-<iframe id="site" src="blockcatalyst.html" title="BlockCatalyst 2026" loading="eager"></iframe>
+<iframe id="site" src="index.html" title="B-RIG website" loading="eager"></iframe>
 
 <div class="hud">
   <span><b>B&#8209;RIG</b> &middot; INAUGURAL CEREMONY</span>
@@ -152,11 +158,11 @@ body.open .curtain .r{transform:translateX(101%)}
   <!-- 2 · keyholders -->
   <section class="scene" data-scene="keys">
     <span class="eyebrow"><i></i>Key ceremony</span>
-    <h1>Any <em>3 of 5</em> keyholders<br>unlock the genesis block</h1>
+    <h1>Three keyholders<br><em>unlock</em> the genesis block</h1>
     <div class="keys" id="keys"></div>
     <div class="quorum"><span id="qn">0</span> / 3 keys</div>
     <button class="btn off" id="bMine" type="button">Mine the genesis block</button>
-    <span class="hint">Tap a key &middot; or press 1&ndash;5 &middot; N to skip</span>
+    <span class="hint">Tap a key &middot; or press 1&ndash;3 &middot; N to skip</span>
   </section>
 
   <!-- 3 · mining -->
@@ -191,8 +197,7 @@ body.open .curtain .r{transform:translateX(101%)}
 </main>
 
 <div class="curtain" aria-hidden="true"><div class="l"></div><div class="r"></div></div>
-<canvas id="fx"></canvas>
-<div class="banner" id="banner"><b>BlockCatalyst 2026 is live</b> &middot; rohit-jr.github.io/B-RIG/blockcatalyst.html</div>
+<div class="banner" id="banner"><b>B-RIG is live</b> &middot; rohit-jr.github.io/B-RIG</div>
 
 <script>
 (function () {
@@ -202,11 +207,9 @@ body.open .curtain .r{transform:translateX(101%)}
   var CHIEF_GUEST = { rank: 'Major General', name: 'Chief Guest Name' };   // <- replace with the real name
   var DATE_TEXT   = '13 October 2026';
   var KEYHOLDERS  = [
-    { label: 'Chief Guest',         sub: CHIEF_GUEST.rank + ' ' + CHIEF_GUEST.name },
-    { label: 'Director',            sub: 'Amrita' },
-    { label: 'Faculty Coordinator', sub: 'TIFAC-CORE' },
-    { label: 'Club Lead',           sub: 'B-RIG' },
-    { label: 'Member',              sub: 'B-RIG' }
+    { label: 'Chief Guest' },
+    { label: 'Director' },
+    { label: 'Faculty Coordinator' }
   ];
   var QUORUM = 3, ZEROS = 4;
   /* -------------------------------------------- */
@@ -310,6 +313,7 @@ body.open .curtain .r{transform:translateX(101%)}
   function toggleKey(i) {
     if (state !== 'keys') return;
     var el = keysEl.children[i];
+    if (!el) return;
     down[i] = !down[i];
     el.classList.toggle('on', !!down[i]);
     el.querySelector('small').innerHTML = 'KEY ' + (i + 1) + ' &middot; ' + (down[i] ? 'TURNED' : 'SEALED');
@@ -325,7 +329,7 @@ body.open .curtain .r{transform:translateX(101%)}
     if (state !== 'keys') return;
     show('mine');
     var term = $('#term'), lines = [
-      '<span class="ok">&gt;</span> authorising ' + Math.max(QUORUM, 3) + '-of-' + KEYHOLDERS.length + ' keyholder quorum &hellip; <span class="ok">ok</span>',
+      '<span class="ok">&gt;</span> authorising ' + KEYHOLDERS.length + ' keyholders &hellip; <span class="ok">ok</span>',
       '<span class="ok">&gt;</span> sealing inaugural message &hellip;',
       '<span class="ok">&gt;</span> difficulty ' + ZEROS + ' &middot; target <span class="hot">' + TARGET + '&hellip;</span>',
       '<span class="ok">&gt;</span> mining block #000 &hellip;'
@@ -360,7 +364,7 @@ body.open .curtain .r{transform:translateX(101%)}
     var z = 0; while (FINAL_HASH[z] === '0') z++;
     $('#sHash').innerHTML = '<span class="diff">' + FINAL_HASH.slice(0, z) + '</span>' + FINAL_HASH.slice(z);
     show('seal');
-    burst(120);
+    burst();
   }
 
   function tamper() {
@@ -386,38 +390,26 @@ body.open .curtain .r{transform:translateX(101%)}
     $('.hud').style.opacity = '0';
     beep(392, 1, 'sine', .1); beep(523, 1, 'sine', .1, .15); beep(659, 1.2, 'sine', .1, .3); beep(784, 1.6, 'sine', .1, .45);
     setTimeout(function () { document.body.classList.add('open'); }, 80);
-    setTimeout(function () { burst(220); }, 900);
+    setTimeout(function () { burst(); }, 900);
     setTimeout(function () { document.querySelector('.curtain').style.display = 'none'; }, 2600);
     setTimeout(function () { $('#banner').classList.add('on'); }, 2200);
-    setTimeout(function () { $('#banner').classList.remove('on'); }, 11000);
+    setTimeout(function () { $('#banner').classList.remove('on'); }, 7500);
+    setTimeout(function () { location.replace('index.html'); }, 9000);
     document.querySelector('.curtain').style.pointerEvents = 'none';
   }
 
   function restart() { location.reload(); }
 
-  /* confetti */
-  var cv = $('#fx'), cx = cv.getContext('2d'), parts = [], run = false;
-  function size() { cv.width = innerWidth; cv.height = innerHeight; }
-  addEventListener('resize', size); size();
-  var COLORS = ['#2cc4b3', '#1f8fa6', '#ff5a3c', '#e9f4f4', '#18606c'];
-  function burst(n) {
-    for (var i = 0; i < n; i++) parts.push({
-      x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .55,
-      vx: (Math.random() - .5) * 16, vy: -Math.random() * 16 - 4, g: .32 + Math.random() * .2,
-      s: 4 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .4,
-      c: COLORS[(Math.random() * COLORS.length) | 0], life: 160 + Math.random() * 80
+  /* a restrained expanding-ring pulse (no confetti) */
+  function burst() {
+    [0, 350, 700].forEach(function (d) {
+      setTimeout(function () {
+        var r = document.createElement('div');
+        r.className = 'ring';
+        document.body.appendChild(r);
+        setTimeout(function () { r.remove(); }, 2600);
+      }, d);
     });
-    if (!run) { run = true; requestAnimationFrame(tick); }
-  }
-  function tick() {
-    cx.clearRect(0, 0, cv.width, cv.height);
-    parts = parts.filter(function (p) { return p.life > 0 && p.y < innerHeight + 30; });
-    parts.forEach(function (p) {
-      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= .99; p.r += p.vr; p.life--;
-      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c;
-      cx.globalAlpha = Math.min(1, p.life / 40); cx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); cx.restore();
-    });
-    if (parts.length) requestAnimationFrame(tick); else { run = false; cx.clearRect(0, 0, cv.width, cv.height); }
   }
 
   /* controls */
@@ -443,13 +435,13 @@ body.open .curtain .r{transform:translateX(101%)}
     if (e.target && /input|textarea/i.test(e.target.tagName)) return;
     var k = e.key.toLowerCase();
     if (k === ' ' || k === 'enter') { e.preventDefault(); primary(); }
-    else if (k >= '1' && k <= '5') toggleKey(+k - 1);
+    else if (k >= '1' && k <= String(KEYHOLDERS.length)) toggleKey(+k - 1);
     else if (k === 'n') skip();
     else if (k === 't') tamper();
     else if (k === 'f') fs();
     else if (k === 'm') $('#bMute').click();
     else if (k === 'r') restart();
-    else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); location.href = 'blockcatalyst.html'; }
+    else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); location.href = 'index.html'; }
   });
 })();
 </script>
