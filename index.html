@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>B-RIG — Blockchain Research Interest Group | Amrita Vishwa Vidyapeetham</title>
-
-<meta name="description" content="B-RIG is a student research group at TIFAC-CORE in Cyber Security, Amrita Vishwa Vidyapeetham, Coimbatore. We work on blockchain forensics, OSINT, DApps, smart contract security and the metaverse — and we run BlockCatalyst, a 24-hour hackathon.">
-<meta name="theme-color" content="#C6C4BE">
+<meta name="description" content="B-RIG is a student research group at TIFAC-CORE in Cyber Security, Amrita Vishwa Vidyapeetham, Coimbatore. Blockchain forensics, OSINT, DApps, smart contract security — and BlockCatalyst, a 24-hour hackathon.">
+<meta name="theme-color" content="#06080c">
 <link rel="canonical" href="https://rohit-jr.github.io/B-RIG/">
 
 <meta property="og:type" content="website">
@@ -16,139 +15,163 @@
 <meta property="og:image" content="https://rohit-jr.github.io/B-RIG/assets/img/og-cover.png">
 <meta name="twitter:card" content="summary_large_image">
 
+<script>
+/* Apply the saved theme before first paint so there is no flash. Dark is the default. */
+(function(){try{var t=localStorage.getItem('brig-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <link rel="icon" href="assets/img/logos/brig.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=3">
 </head>
-
-<body class="home">
-
+<body>
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="topbar">
-  <a class="brand" href="index.html">
-    <img src="assets/img/logos/brig.png" alt="" width="400" height="400" decoding="async">
-    <span class="mono">B&#8209;RIG</span>
+<header class="wrap topbar">
+  <a class="brand" href="index.html" aria-label="B-RIG home">
+    <img src="assets/img/logos/brig.png" alt="" width="400" height="400">
+    <span>B&#8209;RIG</span>
   </a>
   <nav class="nav" aria-label="Main">
     <a href="index.html" aria-current="page">The club</a>
     <a href="blockcatalyst.html">BlockCatalyst</a>
   </nav>
-  <span class="mono dim">Amrita, Coimbatore</span>
+  <div class="topbar-end">
+    <button class="toggle" id="theme-toggle" type="button" aria-label="Switch theme">
+      <svg class="ic i-moon" aria-hidden="true"><use href="assets/img/icons.svg#moon"/></svg>
+      <svg class="ic i-sun" aria-hidden="true"><use href="assets/img/icons.svg#sun"/></svg>
+    </button>
+  </div>
 </header>
 
-<div class="instband">
-  <img src="assets/img/logos/amrita-tifac.png" alt="Amrita Vishwa Vidyapeetham — TIFAC-CORE in Cyber Security" width="927" height="189" decoding="async">
+<div class="wrap instband">
+  <img src="assets/img/logos/amrita-tifac.png" alt="Amrita Vishwa Vidyapeetham, TIFAC-CORE in Cyber Security" width="927" height="189">
 </div>
 
-<main id="main">
+<main id="main" class="wrap">
 
-<section class="hsection hhero">
-  <p class="mono kicker">Blockchain Research Interest Group</p>
-  <h1 class="htitle">We build on-chain things,<br>then try to break them.</h1>
-  <p class="lede">B-RIG is a student research group at TIFAC-CORE in Cyber Security, Amrita Vishwa Vidyapeetham, Coimbatore. We work on blockchain forensics, OSINT, decentralised applications, smart contract security and the metaverse &mdash; mostly by building things and arguing about them afterwards.</p>
-</section>
-
-<section class="hsection" aria-labelledby="up-h">
-  <p class="mono eyebrow">Upcoming</p>
-  <h2 id="up-h" class="sr-only">Upcoming events</h2>
-
-  <a class="eventcard" href="blockcatalyst.html">
-    <div class="ec-main">
-      <p class="mono ec-meta"><span class="ec-live">Registration opens 14 Nov</span> &middot; 24 hours &middot; no rollbacks</p>
-      <h3 class="ec-title">BlockCatalyst <span class="accent">2026</span></h3>
-      <p class="ec-desc">Twenty-four hours. Four people. One problem worth solving. Seven verticals, open to students from any college.</p>
-      <p class="mono ec-when">19&ndash;20 December 2026 &middot; Amrita, Coimbatore</p>
-    </div>
-    <div class="ec-side">
-      <div class="ec-count" id="ec-count">
-        <span class="num mono" id="ec-days">--</span>
-        <span class="mono dim lbl">DAYS TO GO</span>
+  <section class="hero">
+    <div>
+      <span class="eyebrow">Blockchain Research Interest Group</span>
+      <h1>We build <span class="grad-text">on&#8209;chain</span> things, then try to break them.</h1>
+      <p class="sub">A student research group at TIFAC-CORE, Amrita Coimbatore.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary btn-lg" data-form href="#"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#bell"/></svg><span data-cta-label>Get notified</span></a>
+        <a class="btn btn-lg" href="blockcatalyst.html">See the event <svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#arrow"/></svg></a>
       </div>
-      <span class="ec-go mono">See the event <span aria-hidden="true">&rarr;</span></span>
     </div>
-  </a>
+    <div class="chainviz" aria-hidden="true">
+  <svg viewBox="0 0 480 400" role="presentation">
+    <g>
+      <rect class="cv-block" x="40" y="10" width="400" height="96" rx="16"/>
+      <text class="cv-title" x="64" y="42">BLOCK #000</text>
+      <text class="cv-txt" x="64" y="64">prev 0x000000…0000</text>
+      <text class="cv-txt" x="64" y="86">hash 0x7f3a9c…e1b2</text>
+      <rect class="cv-bar a" x="340" y="34" width="76" height="8" rx="4"/>
+      <rect class="cv-bar" x="340" y="52" width="52" height="8" rx="4"/>
+    </g>
+    <line class="cv-link" x1="240" y1="106" x2="240" y2="148"/>
+    <g>
+      <rect class="cv-block" x="40" y="148" width="400" height="96" rx="16"/>
+      <text class="cv-title" x="64" y="180">BLOCK #001</text>
+      <text class="cv-txt" x="64" y="202">prev 0x7f3a9c…e1b2</text>
+      <text class="cv-txt" x="64" y="224">hash 0x2c81d4…a07f</text>
+      <rect class="cv-bar a" x="340" y="172" width="52" height="8" rx="4"/>
+      <rect class="cv-bar" x="340" y="190" width="76" height="8" rx="4"/>
+    </g>
+    <line class="cv-link" x1="240" y1="244" x2="240" y2="286"/>
+    <g>
+      <rect class="cv-block live" x="40" y="286" width="400" height="96" rx="16"/>
+      <text class="cv-title" x="64" y="318">BLOCK #002 · BlockCatalyst</text>
+      <text class="cv-txt" x="64" y="340">prev 0x2c81d4…a07f</text>
+      <text class="cv-txt" x="64" y="362">hash 0x9be0…  mining</text>
+      <rect class="cv-bar a" x="340" y="310" width="76" height="8" rx="4"/>
+      <rect class="cv-bar a" x="340" y="328" width="34" height="8" rx="4"/>
+    </g>
+  </svg>
+</div>
+  </section>
 
-  <p class="micro">The rest of the chain is unconfirmed. Follow <a href="https://www.instagram.com/brig.amrita" target="_blank" rel="noopener">@brig.amrita</a> and you&rsquo;ll hear first.</p>
-</section>
+  <section class="section" aria-labelledby="up-h">
+    <h2 id="up-h" class="sr-only">Upcoming event</h2>
+    <div class="feature">
+      <div>
+        <span class="eyebrow">Upcoming &middot; 24 hours &middot; no rollbacks</span>
+        <h3>BlockCatalyst <span class="grad-text">2026</span></h3>
+        <p class="sub">Four people. One problem worth solving.</p>
+        <div class="chips">
+          <span class="chip"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#calendar"/></svg>19&ndash;20 Dec</span><span class="chip"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#pin"/></svg>Amrita, Coimbatore</span><span class="chip"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#users"/></svg>Teams of 4</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" data-form href="#"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#bell"/></svg><span data-cta-label>Get notified</span></a>
+          <a class="btn" href="blockcatalyst.html">Details</a>
+        </div>
+      </div>
+      <div class="countdown" style="margin-top:0">
+        <span class="cd-label" data-cd-label>Registration opens in</span>
+        <div class="cd-grid" aria-hidden="true">
+          <div class="cd-unit"><span class="num" data-c="d">--</span><span class="lbl">DAYS</span></div>
+          <div class="cd-unit"><span class="num" data-c="h">--</span><span class="lbl">HRS</span></div>
+          <div class="cd-unit"><span class="num" data-c="m">--</span><span class="lbl">MIN</span></div>
+          <div class="cd-unit"><span class="num" data-c="s">--</span><span class="lbl">SEC</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section class="hsection" aria-labelledby="work-h">
-  <p class="mono eyebrow">What we work on</p>
-  <h2 id="work-h">Five things, mostly</h2>
-  <div class="areas">
-    <div class="area">
-      <h3>Forensics</h3>
-      <p>Tracing transactions, reading wallet behaviour, and working out what actually happened on a chain after the fact.</p>
+  <section class="section" aria-labelledby="work-h">
+    <div class="section-head">
+      <span class="eyebrow">What we work on</span>
+      <h2 id="work-h">Five things, mostly</h2>
     </div>
-    <div class="area">
-      <h3>OSINT</h3>
-      <p>Open-source intelligence pointed at on-chain data &mdash; provenance, attribution, and the slow work of investigation.</p>
-    </div>
-    <div class="area">
-      <h3>DApps</h3>
-      <p>Decentralised applications that solve something real, for people who are not crypto traders.</p>
-    </div>
-    <div class="area">
-      <h3>Smart contract security</h3>
-      <p>Contract vulnerabilities, protocol risk, access control. Breaking things carefully, then fixing them.</p>
-    </div>
-    <div class="area">
-      <h3>NFTs and metaverse</h3>
-      <p>Identity, ownership and trust inside immersive environments, where the token has to earn its place.</p>
-    </div>
-  </div>
-</section>
+    <ul class="tiles t5">
+      <li class="tile"><span class="tile-ic"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#forensics"/></svg></span><h3>Forensics</h3><p>Tracing transactions and wallet behaviour.</p></li>
+      <li class="tile"><span class="tile-ic"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#osint"/></svg></span><h3>OSINT</h3><p>Open-source intelligence on on-chain data.</p></li>
+      <li class="tile"><span class="tile-ic"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#dapps"/></svg></span><h3>DApps</h3><p>Decentralised apps that solve something real.</p></li>
+      <li class="tile"><span class="tile-ic"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#security"/></svg></span><h3>Contract security</h3><p>Breaking contracts carefully, then fixing them.</p></li>
+      <li class="tile"><span class="tile-ic"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#metaverse"/></svg></span><h3>NFTs &amp; metaverse</h3><p>Identity, ownership and trust in immersive worlds.</p></li>
+    </ul>
+  </section>
 
-<section class="hsection" aria-labelledby="do-h">
-  <p class="mono eyebrow">How that happens</p>
-  <h2 id="do-h">Workshops, projects, and one long night a year</h2>
-  <p>We run sessions and training through the year for members, take on collaborative projects, and organise events open to the wider campus. New members get trained across all five areas rather than being dropped into one.</p>
-  <ul class="checks">
-    <li>Around thirty new members join each year</li>
-    <li>Training across forensics, OSINT, DApps, contract security and the metaverse</li>
-    <li>A certificate on completing the programme</li>
-    <li>Projects you can actually point at afterwards</li>
-    <li>Alumni stay on the rolls once they have finished</li>
-  </ul>
-  <p class="quote">If you are a student here and any of this sounds like your kind of thing, message us. Recruitment opens once a year and we would rather you asked early than found out late.</p>
-</section>
+  <section class="section" aria-labelledby="join-h">
+    <div class="section-head">
+      <span class="eyebrow">Join</span>
+      <h2 id="join-h">What members get</h2>
+    </div>
+    <ul class="tiles t4">
+      <li class="tile stat"><span class="num"><b>~30</b></span><span class="lbl">new members a year</span></li><li class="tile stat"><span class="num"><b>5</b></span><span class="lbl">areas of training</span></li><li class="tile stat"><span class="num"><b>1</b></span><span class="lbl">completion certificate</span></li><li class="tile stat"><span class="num"><b>&infin;</b></span><span class="lbl">alumni stay on the rolls</span></li>
+    </ul>
+  </section>
 
-<section class="hsection hcta">
-  <h2>Come add a block.</h2>
-  <p>The next thing we are doing is a 24-hour hackathon in December, and it is open to students from any college. Bring three people and an idea worth committing to.</p>
-  <div class="cta">
-    <a class="btn btn-primary" href="blockcatalyst.html">See BlockCatalyst 2026</a>
-    <a class="btn" href="https://www.instagram.com/brig.amrita" target="_blank" rel="noopener">Follow @brig.amrita</a>
-  </div>
-</section>
+  <section class="band">
+    <h2>Come add a <span class="grad-text">block</span>.</h2>
+    <p>Open to students from any college. Bring three people and an idea.</p>
+    <a class="btn btn-primary btn-lg" data-form href="#"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#bell"/></svg><span data-cta-label>Get notified</span></a>
+  </section>
 
 </main>
 
 <footer>
-  <div class="logos">
-    <img src="assets/img/logos/amrita-tifac.png" alt="Amrita Vishwa Vidyapeetham, TIFAC-CORE in Cyber Security" width="927" height="189" loading="lazy" decoding="async">
-    <img src="assets/img/logos/brig.png" alt="Blockchain Research Interest Group" width="400" height="400" loading="lazy" decoding="async">
-    <img src="assets/img/logos/iic.jpg" alt="Institution&rsquo;s Innovation Council" width="440" height="190" loading="lazy" decoding="async">
+  <div class="wrap">
+    <div class="logos">
+      <img src="assets/img/logos/amrita-tifac.png" alt="Amrita Vishwa Vidyapeetham, TIFAC-CORE in Cyber Security" width="927" height="189" loading="lazy">
+      <img src="assets/img/logos/brig.png" alt="Blockchain Research Interest Group" width="400" height="400" loading="lazy">
+      <img src="assets/img/logos/iic.jpg" alt="Institution&rsquo;s Innovation Council" width="440" height="190" loading="lazy">
+    </div>
+    <div class="flinks">
+      <a href="https://www.instagram.com/brig.amrita" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#instagram"/></svg>@brig.amrita</a>
+      <a href="https://github.com/ROHIT-JR/B-RIG" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#code"/></svg>ROHIT-JR/B-RIG</a>
+    </div>
+    <p class="fine">B-RIG &middot; TIFAC-CORE in Cyber Security, Amrita Vishwa Vidyapeetham, Coimbatore &middot; Faculty coordinator: Ramaguru Radhakrishnan<br>page hash <span class="hash" data-hash>computing&hellip;</span></p>
   </div>
-  <div class="fgrid">
-    <div>
-      <p class="mono dim lbl">WHO WE ARE</p>
-      <p>Blockchain Research Interest Group (B-RIG)<br>TIFAC-CORE in Cyber Security<br>Amrita Vishwa Vidyapeetham, Coimbatore</p>
-    </div>
-    <div>
-      <p class="mono dim lbl">FACULTY COORDINATOR</p>
-      <p>Ramaguru Radhakrishnan<br>Assistant Professor (Senior Grade)<br>TIFAC-CORE in Cyber Security<br>Amrita Vishwa Vidyapeetham, Coimbatore</p>
-    </div>
-    <div>
-      <p class="mono dim lbl">SAY HELLO</p>
-      <p><a href="https://www.instagram.com/brig.amrita" target="_blank" rel="noopener">Instagram &mdash; @brig.amrita</a><br><a href="https://github.com/ROHIT-JR/B-RIG" target="_blank" rel="noopener">GitHub &mdash; ROHIT-JR/B-RIG</a></p>
-    </div>
-  </div>
-  <p class="mono dim fnote">To create a vibrant community for the development of socio-economic applications using blockchain technology.</p>
 </footer>
 
-<script src="assets/js/home.js"></script>
+<div class="stickybar">
+  <span class="when" data-cta-when><b>Opens 14 Nov</b>19&ndash;20 Dec &middot; Amrita</span>
+  <a class="btn btn-primary" data-form href="#"><span data-cta-label>Get notified</span><svg class="ic" aria-hidden="true"><use href="assets/img/icons.svg#arrow"/></svg></a>
+</div>
+
+<script src="assets/js/main.js?v=3"></script>
 </body>
 </html>

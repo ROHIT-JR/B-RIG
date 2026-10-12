@@ -2,123 +2,107 @@
   'use strict';
 
   /* ------------------------------------------------------------------
-     EDIT THESE FOUR THINGS. Everything else is generated.
+     EDIT THESE. Everything else is generated.
      ------------------------------------------------------------------ */
 
-  // 1. Paste the Google Form link here (keep the quotes).
+  // The sign-up / registration form. Every [data-form] link points here.
   var FORM_URL = 'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=o835AF4H5USqC6ujrdZTn9yJqd4nikpDkVUzoL1Fjy1UNjFDWkNEUUM5QTVWSVRKTFpPUVgzWFdFNi4u';
 
-  // 2. Set to false once the site has been launched publicly, so that
-  //    visitors skip the genesis gate and land straight on the chain.
-  var SHOW_GATE = true;
-
-  // 3. SHA-256 commitments for the problem statements.
-  //    Leave the strings empty until you have hashed the real statements.
-  //    Generate one with:  shasum -a 256 statement-forensics.txt
-  var COMMITMENTS = {
-    forensics: '',
-    osint: '',
-    dapps: '',
-    nft: '',
-    security: '',
-    metaverse: ''
-  };
-
-  // 4. The date the commitments are published, shown while they are empty.
-  var COMMIT_DATE = 'to be announced';
-
-  /* ------------------------------------------------------------------ */
-
+  // Dates (UTC). Before REGISTRATION_OPEN the CTA reads "Get notified";
+  // after it, it flips to "Register now" on its own.
   var REGISTRATION_OPEN = new Date('2026-11-14T04:30:00Z');
   var HACK_START = new Date('2026-12-19T06:30:00Z');
 
-  var VERTICALS = [
-    { key: 'forensics', name: 'Crypto and blockchain forensics', desc: 'Follow the money. Trace transactions, read wallet behaviour, spot what does not add up.' },
-    { key: 'osint', name: 'OSINT and blockchain', desc: 'Open-source intelligence pointed at on-chain data: provenance, attribution, investigation.' },
-    { key: 'dapps', name: 'DApps', desc: 'Decentralised applications that solve something real, for people who are not crypto traders.' },
-    { key: 'nft', name: 'NFTs', desc: 'Applications where the token actually does work. Artwork and whitepapers alone will not get far here.' },
-    { key: 'security', name: 'Blockchain security', desc: 'Contract vulnerabilities, protocol risk, wallet security, access control. Break things, then fix them.' },
-    { key: 'metaverse', name: 'Metaverse', desc: 'Identity, ownership and trust inside immersive environments, backed by a chain.' }
+  // SHA-256 commitments for the problem statements. Leave empty until the
+  // real statements are hashed; the track cards show "sealed" meanwhile.
+  var COMMITMENTS = { forensics: '', osint: '', dapps: '', nft: '', security: '', metaverse: '' };
+
+  /* ------------------------------------------------------------------ */
+
+  var ICONS = 'assets/img/icons.svg';
+  var icon = function (id, cls) {
+    return '<svg class="ic ' + (cls || '') + '" aria-hidden="true"><use href="' + ICONS + '#' + id + '"/></svg>';
+  };
+
+  var TRACKS = [
+    { key: 'forensics', icon: 'forensics', name: 'Forensics', desc: 'Follow the money on-chain.' },
+    { key: 'osint', icon: 'osint', name: 'OSINT', desc: 'Attribution and provenance.' },
+    { key: 'dapps', icon: 'dapps', name: 'DApps', desc: 'Apps that solve something real.' },
+    { key: 'nft', icon: 'nft', name: 'NFTs', desc: 'Tokens that do actual work.' },
+    { key: 'security', icon: 'security', name: 'Security', desc: 'Break it, then fix it.' },
+    { key: 'metaverse', icon: 'metaverse', name: 'Metaverse', desc: 'Identity and ownership.' }
   ];
 
   var TIMELINE = [
-    { date: 'OCT 13', title: 'This page goes live', desc: 'Dates and verticals announced. Genesis block mined.', done: true },
-    { date: 'NOV 14', title: 'Registration opens', desc: 'All seven problem statements released, along with the fee and the full rulebook.' },
-    { date: 'NOV 30', title: 'Idea submissions close', desc: 'Send us an abstract for the vertical you picked. This is what you will build.' },
-    { date: 'EARLY DEC', title: 'We tell you if you are in', desc: 'Confirmed teams announced. Jury and mentors named around the same time.' },
-    { date: 'DEC 19', title: 'The long day begins', desc: 'Orientation at 9 a.m., coffee, workspace allocation. Clock starts at noon.' },
-    { date: 'DEC 20', title: 'Demos, then results', desc: 'Hands off keyboards at noon. Show us what survived the night.' }
+    { date: 'OCT 13', title: 'Page goes live', done: true },
+    { date: 'NOV 14', title: 'Registration opens', at: REGISTRATION_OPEN },
+    { date: 'NOV 30', title: 'Idea submissions close' },
+    { date: 'EARLY DEC', title: 'Teams confirmed' },
+    { date: 'DEC 19', title: 'Hacking begins', at: HACK_START },
+    { date: 'DEC 20', title: 'Demos and results' }
   ];
 
   var PENDING = [
-    { n: 'BLOCK #006', title: 'The fee', desc: 'Still being worked out with the institution. We will publish it the day registration opens, not before.', when: 'by 14 November' },
-    { n: 'BLOCK #007', title: 'Prize money', desc: 'A substantial pool has been proposed and is awaiting approval. We would rather confirm it than advertise it.', when: 'announced soon' }
+    { title: 'Entry fee', when: 'by 14 November' },
+    { title: 'Prize pool', when: 'announced soon' }
   ];
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  /* ---------- the genesis gate ---------- */
+  /* ---------- theme toggle (initial value is set by the inline <head> script) ---------- */
 
-  var body = document.body;
-  var unlocked = SHOW_GATE === false ||
-    localStorage.getItem('bc26-genesis') === '1' ||
-    location.search.indexOf('live') > -1;
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', t === 'light' ? '#C6C4BE' : '#06080c');
+    var btn = $('#theme-toggle');
+    if (btn) {
+      btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+      btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
 
-  body.setAttribute('data-state', unlocked ? 'live' : 'locked');
-
-  var mine = $('#mine');
-  if (mine) {
-    mine.addEventListener('click', function () {
-      localStorage.setItem('bc26-genesis', '1');
-      body.setAttribute('data-state', 'live');
-      window.scrollTo(0, 0);
-      start();
+  function wireTheme() {
+    applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+    var btn = $('#theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      try { localStorage.setItem('brig-theme', next); } catch (e) {}
     });
   }
 
   /* ---------- rendering ---------- */
 
-  function renderVerticals() {
+  function renderTracks() {
     var ul = $('#verts');
     if (!ul) return;
-    var html = VERTICALS.map(function (v) {
-      var h = COMMITMENTS[v.key];
-      var right = h
-        ? '<span class="vert-hash">' + h.slice(0, 6) + '&hellip;' + h.slice(-4) + '</span>'
-        : '<span class="vert-hash">sealed</span>';
-      return '<li class="vert"><span class="vert-name">' + v.name + '</span>' + right +
-        '<p class="vert-desc">' + v.desc + '</p></li>';
+    var html = TRACKS.map(function (t) {
+      var h = COMMITMENTS[t.key];
+      var tag = h ? '0x' + h.slice(0, 4) + '…' : 'sealed';
+      return '<li class="tile reveal"><span class="tag">' + icon('lock') + tag + '</span>' +
+        '<span class="tile-ic">' + icon(t.icon) + '</span>' +
+        '<h3>' + t.name + '</h3><p>' + t.desc + '</p></li>';
     }).join('');
-
-    html += '<li class="vert vert-open"><span class="vert-name">Student innovation</span>' +
-      '<span class="vert-hash">open</span>' +
-      '<p class="vert-desc">Bring your own problem. Just make it original, genuinely blockchain-shaped, and buildable in a day.</p></li>';
-
+    html += '<li class="tile open reveal"><span class="tag">open</span>' +
+      '<span class="tile-ic">' + icon('open') + '</span>' +
+      '<h3>Your own idea</h3><p>Original and buildable in a day.</p></li>';
     ul.innerHTML = html;
-
-    var committed = Object.keys(COMMITMENTS).some(function (k) { return COMMITMENTS[k]; });
-    var tag = $('[data-commit-tag]');
-    var note = $('[data-commit-note]');
-    if (committed) {
-      if (tag) { tag.textContent = 'COMMITTED'; tag.className = 'mono tag-ok'; }
-    } else if (note) {
-      note.innerHTML = 'Pick one. Six come with a problem statement from us, published on 14 November \u2014 ' +
-        'and we will post a SHA-256 fingerprint of each one beforehand (' + COMMIT_DATE + ') so you can check ' +
-        'we did not quietly rewrite them. The seventh is yours to define.';
-    }
   }
 
   function renderTimeline() {
     var ol = $('#timeline');
     if (!ol) return;
     var now = Date.now();
+    var nextMarked = false;
     ol.innerHTML = TIMELINE.map(function (t) {
-      var done = t.done || (t.at && now > t.at);
-      return '<li class="tl' + (done ? ' done' : '') + '">' +
-        '<span class="tl-date">' + t.date + '</span>' +
-        '<div class="tl-title">' + t.title + '</div>' +
-        '<p class="tl-desc">' + t.desc + '</p></li>';
+      var done = t.done || (t.at && now > t.at.getTime());
+      var cls = 'tl' + (done ? ' done' : '');
+      if (!done && !nextMarked) { cls += ' next'; nextMarked = true; }
+      return '<li class="' + cls + '"><span class="tl-date">' + t.date + '</span>' +
+        '<div class="tl-title">' + t.title + '</div></li>';
     }).join('');
   }
 
@@ -126,140 +110,96 @@
     var w = $('#pcards');
     if (!w) return;
     w.innerHTML = PENDING.map(function (p) {
-      return '<div class="pcard"><span class="pn">' + p.n + '</span> <span class="ps">PENDING</span>' +
-        '<h3>' + p.title + '</h3><p>' + p.desc + '</p>' +
-        '<span class="pd">' + p.when + '</span></div>';
+      return '<div class="pending-card reveal"><span class="ps">PENDING</span>' +
+        '<h3>' + p.title + '</h3><span class="pd">' + p.when + '</span></div>';
     }).join('');
   }
 
-  function wireForm() {
+  /* ---------- CTA wiring ---------- */
+
+  function wireCta() {
+    var open = Date.now() >= REGISTRATION_OPEN.getTime();
     $$('[data-form]').forEach(function (a) {
-      if (FORM_URL) {
-        a.setAttribute('href', FORM_URL);
-        a.setAttribute('target', '_blank');
-        a.setAttribute('rel', 'noopener');
-      } else {
-        a.setAttribute('href', 'https://www.instagram.com/brig.amrita');
-        a.setAttribute('target', '_blank');
-        a.setAttribute('rel', 'noopener');
-      }
+      a.setAttribute('href', FORM_URL || 'https://www.instagram.com/brig.amrita');
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener');
+    });
+    $$('[data-cta-label]').forEach(function (el) {
+      el.textContent = open ? 'Register now' : 'Get notified';
+    });
+    $$('[data-cta-when]').forEach(function (el) {
+      el.innerHTML = open
+        ? '<b>Registration is open</b>19–20 Dec · Amrita'
+        : '<b>Opens 14 Nov</b>19–20 Dec · Amrita';
     });
   }
 
   /* ---------- countdown ---------- */
 
-  var timer = null;
-
   function countdown() {
     var now = Date.now();
     var target = now < REGISTRATION_OPEN.getTime() ? REGISTRATION_OPEN : HACK_START;
-    var label = target === REGISTRATION_OPEN ? 'until registration opens' : 'until hacking begins';
-    var t = $('#ctarget');
-    if (t) t.textContent = label;
+    var label = target === REGISTRATION_OPEN ? 'Registration opens in' : 'Hacking begins in';
+    $$('[data-cd-label]').forEach(function (el) { el.textContent = label; });
 
-    var diff = Math.max(0, target.getTime() - now);
-    var s = Math.floor(diff / 1000);
-    var d = Math.floor(s / 86400);
-    var h = Math.floor((s % 86400) / 3600);
-    var m = Math.floor((s % 3600) / 60);
-    var sec = s % 60;
-
-    var set = function (k, v) {
-      var el = $('[data-c="' + k + '"]');
-      if (el) el.textContent = String(v).padStart(2, '0');
+    var s = Math.floor(Math.max(0, target.getTime() - now) / 1000);
+    var parts = {
+      d: Math.floor(s / 86400),
+      h: Math.floor((s % 86400) / 3600),
+      m: Math.floor((s % 3600) / 60),
+      s: s % 60
     };
-    set('d', d); set('h', h); set('m', m); set('s', sec);
-  }
-
-  /* ---------- real block hashes ---------- */
-
-  function sha256(text) {
-    if (!window.crypto || !crypto.subtle) return Promise.resolve(null);
-    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
-      .then(function (buf) {
-        return Array.prototype.map.call(new Uint8Array(buf), function (b) {
-          return b.toString(16).padStart(2, '0');
-        }).join('');
-      })
-      .catch(function () { return null; });
-  }
-
-  function fallbackHash(text) {
-    var a = 0x811c9dc5, out = '';
-    for (var i = 0; i < text.length; i++) {
-      a ^= text.charCodeAt(i);
-      a = (a * 0x01000193) >>> 0;
-    }
-    for (var j = 0; j < 8; j++) {
-      a = (a * 0x01000193 + j) >>> 0;
-      out += a.toString(16).padStart(8, '0');
-    }
-    return out;
-  }
-
-  function chainHashes() {
-    var blocks = $$('.block');
-    var prev = '0'.repeat(64);
-    var step = function (i) {
-      if (i >= blocks.length) return;
-      var slot = $('[data-hash]', blocks[i]);
-      if (!slot) { step(i + 1); return; }
-      var payload = prev + '|' + (blocks[i].id || i) + '|' +
-        (blocks[i].textContent || '').replace(/\s+/g, ' ').trim();
-      sha256(payload).then(function (hex) {
-        var h = hex || fallbackHash(payload);
-        prev = h;
-        slot.textContent = '0x' + h.slice(0, 8) + '…' + h.slice(-6);
-        slot.setAttribute('title', '0x' + h);
-        step(i + 1);
+    Object.keys(parts).forEach(function (k) {
+      $$('[data-c="' + k + '"]').forEach(function (el) {
+        el.textContent = String(parts[k]).padStart(2, '0');
       });
-    };
-    step(0);
+    });
+  }
 
-    var stat = $('#chainstat');
-    if (stat) stat.textContent = 'chain height ' + String(blocks.length - 1).padStart(3, '0') + ' · synced';
+  /* ---------- page fingerprint (a real SHA-256 of the page text) ---------- */
+
+  function fingerprint() {
+    var slot = $('[data-hash]');
+    if (!slot || !window.crypto || !crypto.subtle) return;
+    var text = (document.querySelector('main') || document.body).textContent.replace(/\s+/g, ' ').trim();
+    crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
+      var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return b.toString(16).padStart(2, '0');
+      }).join('');
+      slot.textContent = '0x' + hex.slice(0, 8) + '…' + hex.slice(-6);
+      slot.setAttribute('title', '0x' + hex);
+    }).catch(function () {});
   }
 
   /* ---------- scroll reveal ---------- */
 
   function scrollReveal() {
-    if (!('IntersectionObserver' in window)) return;
-    var targets = $$('.block, .pcard, .link');
-    targets.forEach(function (el) { el.classList.add('reveal'); });
+    var targets = $$('.reveal, .tile, .stat, .band, .feature');
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach(function (t) { t.classList.add('in'); });
+      return;
+    }
+    targets.forEach(function (t) { t.classList.add('reveal'); });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e, i) {
         if (e.isIntersecting) {
-          setTimeout(function () { e.target.classList.add('in'); }, i * 50);
+          setTimeout(function () { e.target.classList.add('in'); }, i * 40);
           io.unobserve(e.target);
         }
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    targets.forEach(function (el) { io.observe(el); });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
+    targets.forEach(function (t) { io.observe(t); });
   }
 
   /* ---------- boot ---------- */
 
-  var started = false;
-
-  function start() {
-    if (started) return;
-    started = true;
-    renderVerticals();
-    renderTimeline();
-    renderPending();
-    wireForm();
-    countdown();
-    timer = setInterval(countdown, 1000);
-    chainHashes();
-    scrollReveal();
-
-    var ts = $('#genesis-ts');
-    if (ts) {
-      var saved = localStorage.getItem('bc26-ts');
-      if (!saved) { saved = new Date().toISOString().slice(0, 16).replace('T', ' '); localStorage.setItem('bc26-ts', saved); }
-      ts.textContent = saved + ' IST';
-    }
-  }
-
-  if (unlocked) start();
+  wireTheme();
+  renderTracks();
+  renderTimeline();
+  renderPending();
+  wireCta();
+  countdown();
+  setInterval(countdown, 1000);
+  fingerprint();
+  scrollReveal();
 })();

@@ -1,32 +1,61 @@
-:root {
-  /* Monochrome. There is no accent hue on this site — emphasis comes from
-     ink weight, serif display type and whitespace. The only colour on the
-     page is the institutional logos in the footer, and that is deliberate. */
-  --bg: #C6C4BE;        /* warm grey canvas */
-  --block: #E4E2DD;     /* paper laid on the canvas */
-  --chrome: #D5D3CD;    /* block headers, footers, inset panels */
-  --line: #A8A69F;
-  --line-dim: #BCBAB3;
+/* ==========================================================================
+   B-RIG — dark by default, light via the header toggle.
+   Dark: near-black canvas, circuit grid texture, neon green → cyan accent.
+   Light: the original warm-grey monochrome; accent collapses to ink.
+   Theme is set on <html data-theme="dark|light"> by an inline script in <head>.
+   ========================================================================== */
 
-  --ink: #2B2A27;       /* near-black. Does the job an accent hue normally
-                           would: CTAs, brand, active nav, state tags. */
-  --ink-soft: #45433E;  /* links and the confirmed state */
+:root {
+  --bg: #06080c;
+  --bg-2: #0a0f15;
+  --surface: #0e141c;
+  --surface-2: #141c27;
+  --line: #1f2b3a;
+  --line-soft: #172230;
+
+  --text: #eaf0f6;
+  --muted: #a3b0bf;
+  --dim: #8393a6;
+
+  --accent: #2dffa0;
+  --accent-2: #22d3ee;
+  --accent-ink: #03130c;       /* text on top of the accent gradient */
+  --grad: linear-gradient(135deg, #2dffa0 0%, #22d3ee 100%);
+  --glow: rgba(45, 255, 160, .22);
+  --grid: rgba(45, 255, 160, .055);
+  --chip-bg: #ffffff;          /* institutional marks always sit on white */
+
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius: 14px;
+  --wrap: 1200px;
+  --gutter: clamp(16px, 4vw, 40px);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #C6C4BE;
+  --bg-2: #BEBCB5;
+  --surface: #E4E2DD;
+  --surface-2: #D5D3CD;
+  --line: #A8A69F;
+  --line-soft: #BCBAB3;
 
   --text: #2B2A27;
-  --muted: #4A4843;
-  --dim: #4E4C46;          /* smallest labels. 4.7:1 on the raw canvas, which
-                              is the worst case — #54524C measured 4.48 there. */
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --serif: 'Instrument Serif', Georgia, 'Iowan Old Style', 'Times New Roman', serif;
-  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --radius: 8px;
-  --wrap: 1320px;
-  --gutter: clamp(16px, 4vw, 40px);
+  --muted: #45433E;
+  --dim: #4E4C46;
+
+  --accent: #2B2A27;
+  --accent-2: #45433E;
+  --accent-ink: #E4E2DD;
+  --grad: linear-gradient(135deg, #2B2A27, #3a3833);
+  --glow: transparent;
+  --grid: rgba(43, 42, 39, .05);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -34,466 +63,336 @@ body {
   color: var(--text);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+  transition: background .25s ease, color .25s ease;
 }
 
-/* Display is serif, set at 400 — Instrument Serif has one weight and does
-   not want tight tracking. Chrome and metadata stay mono, prose stays sans. */
-h1, h2, h3 {
-  font-family: var(--serif);
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1.15;
-  margin: 0 0 12px;
+/* Texture: a faint circuit grid that fades out toward the bottom, plus two
+   soft glows. Fixed, so it stays put while content scrolls over it. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 40% at 85% -5%, var(--glow), transparent 70%),
+    radial-gradient(45% 35% at 5% 8%, rgba(34, 211, 238, .09), transparent 70%),
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 46px 46px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 46px 46px;
+  -webkit-mask-image: linear-gradient(#000 55%, rgba(0, 0, 0, .35));
+          mask-image: linear-gradient(#000 55%, rgba(0, 0, 0, .35));
 }
-h2 { font-size: 27px; }
-h3 { font-size: 19px; }
-p { margin: 0 0 14px; }
-
-/* SERIF FLOOR — 19px.
-   Instrument Serif is a display face: high stroke contrast, fine hairlines,
-   drawn to be set large. Below ~19px the thin strokes drop below one device
-   pixel on a 1x display and the hinting fills them in unevenly, so small
-   headings go muddy. Most of this audience is on 1x Windows laptops, so this
-   is the common case, not the edge case.
-   Any heading under the floor reverts to Inter at 500. If you add a new small
-   heading, add it here rather than setting it serif. */
-.area h3,
-.pcard h3,
-.vert-name,
-.tl .tl-title {
-  font-family: var(--sans);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+:root[data-theme="light"] body::before {
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 46px 46px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 46px 46px;
 }
 
-/* With no accent hue, a link has to earn its affordance from the underline. */
-a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
-a:hover { color: var(--ink); }
-.nav a, a.brand, .btn, .eventcard, .skip, .logos a { text-decoration: none; }
+h1, h2, h3 { font-family: var(--sans); font-weight: 650; letter-spacing: -0.025em; line-height: 1.1; margin: 0; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 3px; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 img { max-width: 100%; }
+svg { display: block; }
 
 .mono { font-family: var(--mono); }
 .dim { color: var(--dim); }
-.accent { color: var(--ink); }
-.lbl { font-size: 10px; letter-spacing: 0.1em; display: block; }
-.sub { color: var(--muted); font-size: 14px; }
-.note { color: var(--muted); font-size: 14px; margin-top: 16px; }
+.ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-/* Pills, echoing Geex's circular black CTA. Primary is solid ink; there is
-   no second colour to fall back on, so only one button per view gets it. */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: -9999px; top: 8px; padding: 10px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; color: var(--text); z-index: 100; }
+.skip:focus { left: 16px; }
+
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ---------- buttons ---------- */
+
 .btn {
-  display: inline-block;
-  padding: 11px 22px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--text);
-  font-size: 14px;
-  font-family: var(--sans);
-  background: transparent;
-  cursor: pointer;
-  transition: background .18s ease, border-color .18s ease, color .18s ease;
-}
-.btn:hover { background: var(--block); border-color: var(--ink); text-decoration: none; }
-.btn-primary { background: var(--ink); border-color: var(--ink); color: var(--block); font-weight: 500; }
-.btn-primary:hover { background: #000; border-color: #000; color: #fff; }
-.btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-
-.gate {
-  min-height: 100vh;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  text-align: center;
-  background:
-    repeating-linear-gradient(60deg, transparent 0 38px, var(--line-dim) 38px 38.5px),
-    repeating-linear-gradient(-60deg, transparent 0 38px, var(--line-dim) 38px 38.5px),
-    var(--bg);
+  gap: 10px;
+  padding: 12px 22px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: 500 15px/1 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
 }
-.gate-inner { max-width: 440px; }
-.gate-status { font-size: 11px; letter-spacing: 0.1em; margin-bottom: 20px; }
-.gate-title { font-size: 42px; margin-bottom: 10px; }
-.gate-sub { color: var(--muted); font-size: 15px; margin-bottom: 26px; }
-.gate-foot { font-size: 10px; letter-spacing: 0.08em; margin-top: 28px; }
+.btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.btn:focus-visible, .toggle:focus-visible, .tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-body[data-state="locked"] .chain { display: none; }
-body[data-state="live"] .gate { display: none; }
-body[data-state="live"] .chain { animation: rise .7s ease both; }
-@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+/* The one button that matters. Gradient fill + glow so it is the loudest
+   thing on the screen in dark mode; solid ink in light mode. */
+.btn-primary {
+  background: var(--grad);
+  border-color: transparent;
+  color: var(--accent-ink);
+  font-weight: 650;
+  box-shadow: 0 0 0 0 var(--glow), 0 8px 28px -8px var(--glow);
+  animation: cta-pulse 2.8s ease-in-out infinite;
+}
+.btn-primary:hover { border-color: transparent; box-shadow: 0 0 0 6px var(--glow), 0 10px 34px -6px var(--glow); }
+.btn-lg { padding: 17px 30px; font-size: 17px; }
+@keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--glow), 0 8px 28px -8px var(--glow); }
+  50%      { box-shadow: 0 0 0 7px transparent, 0 8px 34px -4px var(--glow); }
+}
+
+/* ---------- header ---------- */
 
 .topbar {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 18px var(--gutter);
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  gap: 12px 20px;
+  padding-top: 16px;
+  padding-bottom: 12px;
 }
-/* The club mark sits beside the wordmark, not instead of it — at 24px the
-   "Blockchain / Research Interest Group" lockup inside the PNG is unreadable,
-   so the text does the naming and the mark does the recognition. The <img>
-   carries alt="" for exactly that reason: the wordmark next to it is the
-   accessible name, and announcing both would stutter. */
-.brand {
-  display: inline-flex;
-  white-space: nowrap;
-  flex: none;
-  align-items: center;
-  gap: 9px;
-  color: var(--ink);
-  font-weight: 500;
-  letter-spacing: 0.14em;
-}
-/* brig.png is opaque RGB on a hard white square, so it needs the same white
-   chip the footer marks get — otherwise it reads as a white box dropped on
-   the grey canvas. */
-.brand img {
-  width: 34px;
-  height: 34px;
-  display: block;
-  flex: none;
-  background: #fff;
-  padding: 3px;
-  border-radius: 7px;
-  box-sizing: content-box;
-}
-
-/* Institutional affiliation band, directly under the nav on both pages.
-   The same lockup also appears in the footer — that is the normal header /
-   credits split for an institution-hosted site, not an accident. */
-.instband {
-  max-width: var(--wrap);
-  margin: 0 auto;
-  padding: 0 var(--gutter) 16px;
-  border-bottom: 1px solid var(--line-dim);
-  margin-bottom: 20px;
-}
-.instband img {
-  height: 38px;
-  width: auto;
-  max-width: 100%;
-  display: block;
-  background: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  box-sizing: content-box;
-}
-
-.gate-inst {
-  height: 26px;
-  width: auto;
-  display: block;
-  margin: 18px auto 0;
-  background: #fff;
-  padding: 7px 10px;
-  border-radius: 6px;
-  box-sizing: content-box;
-}
-
-.gate-logo {
-  width: 64px;
-  height: 64px;
-  display: block;
-  margin: 0 auto 22px;
-  background: #fff;
-  padding: 8px;
-  border-radius: 10px;
-  box-sizing: content-box;
-}
-
-main { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter) 40px; }
-
-.block {
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font: 600 13px/1 var(--mono); letter-spacing: .16em; white-space: nowrap; }
+.brand img { width: 38px; height: 38px; background: var(--chip-bg); padding: 3px; border-radius: 9px; display: block; }
+.nav { display: flex; gap: 4px; margin-left: 12px; }
+.nav a { padding: 8px 14px; border-radius: 999px; color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; border: 1px solid transparent; }
+.nav a:hover { color: var(--text); }
+.nav a[aria-current="page"] { color: var(--text); background: var(--surface); border-color: var(--line); }
+.topbar-end { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.toggle {
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border-radius: 999px;
   border: 1px solid var(--line);
-  box-shadow: 0 1px 2px rgba(11,24,23,.04);
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--block);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
 }
-.bhead {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  align-items: center;
-  padding: 9px 16px;
-  background: var(--chrome);
-  border-bottom: 1px solid var(--line);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-}
-/* State tags are all one ink. In a monochrome system state has to be legible
-   from the word itself (GENESIS / CONFIRMED / PENDING) plus the dashed border
-   on pending cards — never from shade. Tinting PENDING lighter than CONFIRMED
-   made it the darker of the two, which read backwards, and any grey pale
-   enough to recede failed AA at 11px. */
-.tag-n, .tag-ok, .tag-pending { color: var(--ink); }
-.bbody { padding: clamp(20px, 3vw, 40px); }
-.bfoot {
-  padding: 9px 16px;
-  background: var(--chrome);
-  border-top: 1px solid var(--line-dim);
-  font-size: 10px;
-  word-break: break-all;
-}
+.toggle:hover { border-color: var(--accent); }
+.toggle .i-sun { display: none; }
+:root[data-theme="light"] .toggle .i-sun { display: block; }
+:root[data-theme="light"] .toggle .i-moon { display: none; }
 
-.link { width: 1px; height: 26px; background: var(--line); margin: 0 auto; }
-.dim-link { background: var(--line-dim); }
+.instband { padding-bottom: 14px; }
+.instband img { height: 40px; width: auto; max-width: 100%; display: block; background: var(--chip-bg); padding: 8px 12px; border-radius: 10px; box-sizing: content-box; }
 
-.kicker { font-size: 11px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 14px; text-transform: uppercase; }
-.title { font-size: clamp(38px, 8vw, 76px); margin-bottom: 14px; }
-.lede { color: var(--muted); font-size: 16px; max-width: 54ch; margin-bottom: 26px; }
+/* ---------- hero ---------- */
 
-.when { display: flex; flex-wrap: wrap; gap: 28px; margin-bottom: 26px; }
-.when .val { font-size: 15px; }
+.hero { display: grid; gap: 40px; align-items: center; padding: clamp(32px, 7vw, 88px) 0 clamp(28px, 5vw, 56px); }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: 10px; }
+.eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: blink 1.8s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .35; } }
 
-.counter {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 22px;
-  padding: 16px 18px;
-  background: var(--chrome);
-  border-radius: var(--radius);
-  margin-bottom: 26px;
-}
-.unit .num { font-size: 28px; display: block; line-height: 1.1; }
-.ctarget { font-size: 10px; letter-spacing: 0.1em; margin: 0 0 4px auto; }
+.hero h1 { font-size: clamp(38px, 7.6vw, 80px); margin: 18px 0 16px; }
+.grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="light"] .grad-text { color: var(--text); background: none; }
+.hero .sub { font-size: clamp(17px, 2vw, 21px); color: var(--muted); max-width: 34ch; }
 
-.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 0; }
+.chip { display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 14px; color: var(--text); }
+.chip .ic { width: 17px; height: 17px; color: var(--accent); }
 
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-top: 20px; }
-.stat { background: var(--chrome); border-radius: var(--radius); padding: 14px 16px; }
-.stat .num { font-size: 24px; display: block; line-height: 1.2; color: var(--text); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; align-items: center; }
+.micro { color: var(--dim); font-size: 13px; margin-top: 14px; }
 
-.verts { margin-top: 18px; }
-.vert {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  padding: 12px 14px;
-  background: var(--chrome);
-  border-radius: var(--radius);
-  margin-bottom: 6px;
-}
-.vert-name { font-size: 15px; }
-.vert-desc { color: var(--muted); font-size: 13px; width: 100%; margin: 0; }
-.vert-hash { font-family: var(--mono); font-size: 11px; color: var(--dim); }
-.vert-open { border: 0.5px dashed var(--line); background: transparent; }
+/* chain visual */
+.chainviz { width: 100%; max-width: 520px; margin-inline: auto; color: var(--accent); }
+.chainviz svg { width: 100%; height: auto; overflow: visible; }
+.cv-block { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.cv-block.live { stroke: var(--accent); filter: drop-shadow(0 0 10px var(--glow)); }
+.cv-txt { font: 500 11px var(--mono); fill: var(--dim); }
+.cv-title { font: 600 13px var(--mono); fill: var(--text); }
+.cv-link { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 6; animation: flow 1.6s linear infinite; opacity: .8; }
+@keyframes flow { to { stroke-dashoffset: -22; } }
+.cv-bar { fill: var(--line); }
+.cv-bar.a { fill: var(--accent); opacity: .85; }
+:root[data-theme="light"] .cv-link { opacity: 1; }
 
-.checks li {
+/* ---------- countdown ---------- */
+
+.countdown { margin-top: 28px; }
+.cd-label { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; display: block; }
+.cd-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 76px)); gap: 10px; }
+.cd-unit { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 6px 9px; text-align: center; }
+.cd-unit .num { display: block; font: 600 clamp(24px, 6vw, 32px)/1.1 var(--mono); color: var(--text); font-variant-numeric: tabular-nums; }
+.cd-unit .lbl { display: block; margin-top: 4px; font: 500 10px/1 var(--mono); letter-spacing: .12em; color: var(--dim); }
+
+/* ---------- sections ---------- */
+
+.section { padding: clamp(32px, 5vw, 64px) 0; }
+.section-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+.section-head h2 { font-size: clamp(26px, 4.2vw, 40px); }
+
+.tiles { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tile {
   position: relative;
-  padding: 7px 0 7px 26px;
-  border-bottom: 0.5px solid var(--line-dim);
-  font-size: 15px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color .2s ease, transform .2s ease, background .2s ease;
 }
-.checks li:last-child { border-bottom: 0; }
-.checks li::before { content: ""; position: absolute; left: 4px; top: 17px; width: 7px; height: 7px; background: var(--ink-soft); border-radius: 50%; }
-
-.timeline { margin-top: 18px; }
-.tl { position: relative; padding: 0 0 20px 26px; border-left: 0.5px solid var(--line-dim); }
-.tl:last-child { padding-bottom: 0; border-left-color: transparent; }
-.tl::before { content: ""; position: absolute; left: -5px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--line); }
-.tl.done::before { background: var(--ink); border-color: var(--ink); }
-.tl .tl-date { font-family: var(--mono); font-size: 11px; color: var(--ink); letter-spacing: 0.06em; }
-.tl .tl-title { font-size: 15px; }
-.tl .tl-desc { color: var(--muted); font-size: 13px; margin: 0; }
-
-.pending { margin-top: 26px; }
-.mem-h { font-size: 20px; margin-bottom: 6px; }
-.mem-sub { color: var(--muted); font-size: 14px; max-width: 58ch; margin-bottom: 16px; }
-.pcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
-.pcard {
-  border: 1px dashed var(--line);
+.tile:hover { border-color: var(--accent); transform: translateY(-3px); }
+.tile h3 { font-size: 17px; letter-spacing: -0.01em; }
+.tile p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.tile-ic {
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
   border-radius: 12px;
-  padding: 16px;
-  background: transparent;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--accent);
 }
-.pcard .pn { font-family: var(--mono); font-size: 11px; color: var(--dim); }
-.pcard .ps { font-family: var(--mono); font-size: 11px; color: var(--ink); }
-.pcard h3 { font-size: 15px; margin: 8px 0 4px; }
-.pcard p { color: var(--muted); font-size: 13px; margin: 0; }
-.pcard .pd { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 8px; display: block; }
+.tile-ic .ic { width: 24px; height: 24px; }
+.tile .tag { position: absolute; top: 14px; right: 14px; font: 500 10px/1 var(--mono); letter-spacing: .1em; color: var(--dim); display: inline-flex; align-items: center; gap: 5px; }
+.tile .tag .ic { width: 12px; height: 12px; }
+.tile.open { border-style: dashed; }
 
-.closing { margin-top: 26px; text-align: center; }
-.closing .cta { justify-content: center; }
+.stat .num { font: 600 clamp(30px, 6vw, 44px)/1 var(--mono); color: var(--text); }
+.stat .num b { font-weight: 600; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+:root[data-theme="light"] .stat .num b { color: var(--text); background: none; }
+.stat .lbl { font: 500 11px/1.3 var(--mono); letter-spacing: .12em; color: var(--dim); text-transform: uppercase; }
 
-footer { max-width: var(--wrap); margin: 0 auto; padding: 36px var(--gutter) 56px; border-top: 1px solid var(--line-dim); }
-.logos { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-bottom: 30px; }
-/* The institutional marks stay in full colour — they are not ours to
-   restyle. White chips frame them as official marks rather than letting
-   them read as stray colour in a monochrome page. */
-.logos img {
-  height: 44px;
-  width: auto;
-  max-width: 100%;
-  background: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  box-sizing: content-box;
+/* feature card on the homepage */
+.feature {
+  display: grid;
+  gap: 28px;
+  padding: clamp(22px, 4vw, 40px);
+  border-radius: 20px;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--grad) border-box;
+  border: 1px solid transparent;
+  color: var(--text);
 }
-.fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 22px; font-size: 14px; }
-.fgrid p { color: var(--muted); margin: 6px 0 0; }
-.fnote { font-size: 10px; margin-top: 30px; line-height: 1.6; }
+:root[data-theme="light"] .feature { background: var(--surface); border-color: var(--line); }
+.feature h3 { font-size: clamp(28px, 5vw, 44px); margin: 14px 0 8px; }
+.feature p.sub { color: var(--muted); max-width: 38ch; }
 
-.reveal { opacity: 0; transform: translateY(12px); transition: opacity .55s ease, transform .55s ease; }
+/* ---------- timeline ---------- */
+
+.timeline { display: grid; gap: 0; }
+.tl { position: relative; padding: 0 0 22px 28px; border-left: 1px solid var(--line); }
+.tl:last-child { padding-bottom: 0; border-left-color: transparent; }
+.tl::before { content: ""; position: absolute; left: -6px; top: 4px; width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 2px solid var(--line); }
+.tl.done::before, .tl.next::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 12px var(--glow); }
+.tl-date { font: 500 12px/1 var(--mono); letter-spacing: .1em; color: var(--accent); display: block; margin-bottom: 6px; }
+.tl-title { font-weight: 550; font-size: 16px; }
+
+/* ---------- pending ---------- */
+
+.pending-card { border: 1px dashed var(--line); border-radius: var(--radius); padding: 20px; background: transparent; display: flex; flex-direction: column; gap: 8px; }
+.pending-card .ps { font: 500 11px/1 var(--mono); letter-spacing: .12em; color: var(--accent); }
+.pending-card h3 { font-size: 18px; }
+.pending-card .pd { font: 400 13px var(--mono); color: var(--dim); }
+
+/* ---------- closing CTA ---------- */
+
+.band {
+  margin: clamp(16px, 3vw, 40px) 0 clamp(32px, 5vw, 64px);
+  padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 48px);
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(70% 120% at 100% 0%, var(--glow), transparent 60%),
+    var(--surface);
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 22px;
+}
+.band h2 { font-size: clamp(28px, 5vw, 46px); }
+.band p { color: var(--muted); max-width: 44ch; }
+
+/* ---------- footer ---------- */
+
+footer { border-top: 1px solid var(--line-soft); padding: 36px 0 calc(40px + env(safe-area-inset-bottom)); }
+.logos { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 28px; }
+.logos img { height: 48px; width: auto; max-width: 100%; background: var(--chip-bg); padding: 8px 12px; border-radius: 10px; box-sizing: content-box; }
+.flinks { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 14px; }
+.flinks a { color: var(--muted); display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.flinks a:hover { color: var(--accent); }
+.flinks .ic { width: 18px; height: 18px; }
+.fine { margin-top: 22px; font: 400 12px/1.7 var(--mono); color: var(--dim); max-width: 70ch; }
+.fine .hash { color: var(--muted); }
+
+/* ---------- sticky phone CTA ---------- */
+
+.stickybar { display: none; }
+
+/* ---------- reveal ---------- */
+
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
 .reveal.in { opacity: 1; transform: none; }
 
-@media (max-width: 560px) {
-  .bbody { padding: 20px 16px; }
-  .counter { gap: 16px; }
-  .ctarget { margin: 6px 0 0; width: 100%; }
+/* ---------- responsive ---------- */
+
+@media (min-width: 900px) {
+  .hero { grid-template-columns: 1.15fr .85fr; }
+  .tiles.t3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tiles.t4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tiles.t5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .feature { grid-template-columns: 1.3fr 1fr; align-items: center; }
+  .timeline { grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .tl { padding: 22px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+  .tl:last-child { border-top-color: var(--line); }
+  .tl::before { left: 0; top: -6px; }
+}
+@media (min-width: 1100px) {
+  .tiles.t7 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 899px) {
+  .tiles.t5 .tile:last-child:nth-child(odd),
+  .tiles.t7 .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .chainviz { max-width: 420px; }
+}
+
+/* Phones. Header becomes two rows: brand + toggle, then a full-width
+   segmented nav. The primary CTA is pinned to the bottom of the screen so
+   "get notified" is one thumb-tap from anywhere on the page. */
+@media (max-width: 640px) {
+  body { font-size: 15px; padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  .topbar { gap: 10px; padding-top: 12px; padding-bottom: 6px; }
+  .brand img { width: 40px; height: 40px; }
+  .topbar-end { order: 2; }
+  .nav { order: 3; flex: 1 0 100%; margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+  .nav a { flex: 1; text-align: center; padding: 10px 8px; }
+  .instband img { height: 34px; padding: 7px 10px; }
+  .hero { padding-top: 22px; gap: 28px; }
+  .hero h1 { margin-top: 14px; }
+  .cta-row .btn-lg { width: 100%; }
+  .chip { font-size: 13px; padding: 8px 12px; }
+  .cd-grid { grid-template-columns: repeat(4, 1fr); }
+  .tile { padding: 16px 14px; }
+  .tile-ic { width: 42px; height: 42px; }
+  .logos img { height: 42px; }
+  .band .btn { width: 100%; }
+
+  .stickybar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+  }
+  .stickybar .when { font: 500 11px/1.3 var(--mono); letter-spacing: .06em; color: var(--muted); flex: 1; }
+  .stickybar .when b { display: block; color: var(--text); font-weight: 600; }
+  .stickybar .btn { flex: none; padding: 13px 20px; animation: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; }
-}
-
-.skip {
-  position: absolute;
-  left: -9999px;
-  top: 8px;
-  padding: 10px 16px;
-  background: var(--block);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  color: var(--text);
-  z-index: 10;
-}
-.skip:focus { left: 16px; }
-
-.sr-only {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.micro { color: var(--dim); font-size: 13px; margin: 14px 0 0; }
-
-/* Explains the hash footers. Without it the digests read as decoration —
-   this is the line that turns the signature into a demonstration. */
-.chainnote {
-  font-size: 11.5px;
-  line-height: 1.7;
-  color: var(--dim);
-  border-top: 1px solid var(--line-dim);
-  margin: 22px 0 0;
-  padding-top: 14px;
-  max-width: 62ch;
-}
-
-.quote {
-  font-family: var(--serif);
-  font-size: 22px;
-  line-height: 1.45;
-  color: var(--text);
-  border-left: 2px solid var(--ink);
-  padding: 2px 0 2px 16px;
-  margin: 20px 0 0;
-}
-
-/* ---------- shared nav ---------- */
-
-.topbar { gap: 20px; }
-a.brand { text-decoration: none; }
-a.brand:hover { text-decoration: none; opacity: .75; }
-.nav { display: flex; gap: 22px; margin-right: auto; white-space: nowrap; }
-.nav a {
-  font-size: 13px;
-  color: var(--muted);
-  letter-spacing: 0;
-  padding: 6px 0;
-  border-bottom: 1px solid transparent;
-}
-.nav a:hover { color: var(--text); text-decoration: none; border-bottom-color: var(--line); }
-.nav a[aria-current="page"] { color: var(--text); border-bottom-color: var(--ink); }
-
-/* ---------- club homepage ---------- */
-
-.home main { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter) 40px; }
-
-.hsection { padding: 40px 0; border-bottom: 1px solid var(--line-dim); }
-.hsection:last-child { border-bottom: 0; }
-.eyebrow { font-size: 11px; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; margin-bottom: 10px; }
-
-.hhero { padding-top: 24px; }
-.htitle { font-size: clamp(34px, 7.4vw, 72px); line-height: 1.08; margin-bottom: 18px; }
-.hhero .lede { margin-bottom: 0; max-width: 62ch; font-size: clamp(16px, 1.3vw, 18px); }
-
-.eventcard {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px;
-  background: var(--block);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--ink);
-  border-radius: 12px;
-  color: var(--text);
-  transition: border-color .18s ease, transform .18s ease;
-}
-.eventcard:hover { text-decoration: none; border-color: var(--ink-soft); border-left-color: var(--ink); transform: translateY(-2px); }
-.eventcard:focus-visible { outline: 2px solid var(--ink-soft); outline-offset: 3px; }
-.ec-main { flex: 1 1 320px; }
-.ec-meta { font-size: 11px; color: var(--dim); letter-spacing: 0.06em; margin-bottom: 8px; }
-.ec-live { color: var(--ink); }
-.ec-title { font-size: 32px; margin-bottom: 8px; }
-.ec-desc { color: var(--muted); font-size: 15px; margin-bottom: 10px; max-width: 48ch; }
-.ec-when { font-size: 12px; color: var(--dim); margin: 0; }
-.ec-side { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.ec-count { background: var(--chrome); border-radius: var(--radius); padding: 12px 16px; }
-.ec-count .num { font-size: 30px; display: block; line-height: 1.1; }
-.ec-go { font-size: 13px; color: var(--ink-soft); }
-
-.areas { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 20px; }
-.area { background: var(--block); border: 1px solid var(--line-dim); border-radius: 12px; padding: 18px 20px; }
-.area h3 { font-size: 15px; margin-bottom: 6px; }
-.area p { color: var(--muted); font-size: 14px; margin: 0; }
-
-
-.hcta { text-align: center; }
-.hcta .cta { justify-content: center; margin-top: 18px; }
-.hcta p { color: var(--muted); max-width: 48ch; margin-left: auto; margin-right: auto; }
-
-@media (max-width: 560px) {
-  /* Brand + nav on one row; the location/chain-height tag drops to its own
-     line below instead of squeezing the nav into wrapped words. */
-  .topbar { flex-wrap: wrap; gap: 8px 16px; padding-top: 14px; padding-bottom: 8px; }
-  .topbar > .mono.dim { order: 3; flex: 1 0 100%; font-size: 10px; }
-  .nav { gap: 16px; margin-right: 0; margin-left: auto; }
-  .nav a { font-size: 14px; }
-  .instband { padding-bottom: 14px; margin-bottom: 8px; }
-  .instband img { height: 32px; }
-  .logos { gap: 12px; }
-  .logos img { height: 40px; }
-  .eventcard { padding: 20px; gap: 18px; }
-  .ec-main { flex-basis: 100%; }
-  .ec-side { flex-direction: row; align-items: center; gap: 16px; }
-  .ec-title { font-size: 30px; }
-  .hsection { padding: 30px 0; }
-  .areas, .pcards, .fgrid { grid-template-columns: 1fr; }
-  .bhead { gap: 6px 14px; }
-}
-
-@media (min-width: 900px) {
-  .areas { grid-template-columns: repeat(3, 1fr); }
-  .fgrid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-  .hhero { padding-top: 56px; }
-  .ec-title { font-size: 40px; }
-  .eventcard { padding: 32px 36px; }
 }
