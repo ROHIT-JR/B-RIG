@@ -387,8 +387,15 @@ body.open .curtain .r{transform:translateX(101%)}
     setTimeout(function () { document.body.classList.add('open'); }, 80);
     setTimeout(function () { burst(); }, 900);
     setTimeout(function () { document.querySelector('.curtain').style.display = 'none'; }, 2600);
-    setTimeout(function () { location.replace('blockcatalyst.html'); }, 4800);
+    setTimeout(goToSite, 4800);
     document.querySelector('.curtain').style.pointerEvents = 'none';
+  }
+
+  /* land on the site in the theme the ceremony is showing */
+  function goToSite() {
+    var t = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    try { localStorage.setItem('brig-theme', t); } catch (e) {}
+    location.replace('blockcatalyst.html?theme=' + t);
   }
 
   function restart() { location.reload(); }
@@ -443,7 +450,7 @@ body.open .curtain .r{transform:translateX(101%)}
     else if (k === 'm') $('#bMute').click();
     else if (k === 'l') $('#bTheme').click();
     else if (k === 'r') restart();
-    else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); location.href = 'blockcatalyst.html'; }
+    else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); goToSite(); }
   });
 })();
 </script>
