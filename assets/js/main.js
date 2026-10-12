@@ -64,7 +64,7 @@
   }
 
   function wireTheme() {
-    applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+    applyTheme(document.documentElement.getAttribute('data-theme') || 'light');
     var btn = $('#theme-toggle');
     if (!btn) return;
     btn.addEventListener('click', function () {
