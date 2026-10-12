@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#04121b">
+<title>B-RIG — Inaugural ceremony</title>
+<link rel="icon" href="assets/img/logos/brig.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04121b; --surface:#0a2130; --surface-2:#0f2c3e; --line:#18414f;
+  --text:#e9f4f4; --muted:#9fb8bf; --dim:#7fa0a9;
+  --teal:#2cc4b3; --steel:#1f8fa6; --pop:#ff5a3c;
+  --grad:linear-gradient(135deg,#2cc4b3,#1f8fa6);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;
+  background:
+   radial-gradient(60% 45% at 80% -5%,rgba(44,196,179,.22),transparent 70%),
+   radial-gradient(45% 35% at 5% 100%,rgba(240,36,0,.10),transparent 70%),
+   linear-gradient(rgba(44,196,179,.06) 1px,transparent 1px) 0 0/46px 46px,
+   linear-gradient(90deg,rgba(44,196,179,.06) 1px,transparent 1px) 0 0/46px 46px}
+
+/* the live site sits underneath everything and is only exposed by the curtain */
+#site{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg);visibility:hidden}
+body.live #site{visibility:visible}
+
+.stage{position:fixed;inset:0;display:grid;place-items:center;padding:clamp(16px,4vw,48px)}
+.hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+  padding:14px clamp(16px,3vw,32px);font:500 11px/1 var(--mono);letter-spacing:.14em;color:var(--dim);z-index:5}
+.hud b{color:var(--teal);font-weight:600}
+.hud button{all:unset;cursor:pointer;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.hud button:hover{border-color:var(--teal);color:var(--text)}
+
+.scene{display:none;width:min(1000px,100%);text-align:center;flex-direction:column;align-items:center;gap:clamp(14px,2.4vh,26px)}
+.scene.on{display:flex;animation:in .6s ease both}
+@keyframes in{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+
+.mark{width:clamp(84px,14vh,132px);height:auto;background:#fff;border-radius:22px;padding:8px;box-shadow:0 0 60px rgba(44,196,179,.28)}
+.eyebrow{font:500 clamp(11px,1.5vh,13px)/1.4 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--teal)}
+.eyebrow i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pop);margin-right:10px;box-shadow:0 0 12px var(--pop);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.3}}
+h1{margin:0;font-size:clamp(30px,6.2vh,64px);line-height:1.08;letter-spacing:-.03em;font-weight:700}
+h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:0;color:var(--muted);font-size:clamp(14px,2.1vh,20px);max-width:56ch}
+
+.guest{display:flex;flex-direction:column;gap:6px;padding:16px 30px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.guest small{font:500 11px/1 var(--mono);letter-spacing:.2em;color:var(--dim)}
+.guest strong{font-size:clamp(20px,3.4vh,32px);font-weight:600}
+.guest span{color:var(--teal);font-weight:500}
+
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:clamp(14px,2.2vh,20px) clamp(26px,4vh,40px);border-radius:999px;font:700 clamp(15px,2.2vh,19px)/1 var(--sans);
+  color:#031a1a;background:var(--grad);box-shadow:0 10px 40px -8px rgba(44,196,179,.55);animation:pulse 2.4s ease-in-out infinite}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none;animation:none}
+.btn[disabled],.btn.off{opacity:.35;pointer-events:none;animation:none}
+@keyframes pulse{50%{box-shadow:0 0 0 10px rgba(44,196,179,0),0 10px 50px -4px rgba(44,196,179,.75)}}
+.row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.hint{font:400 12px/1.5 var(--mono);color:var(--dim)}
+
+/* keyholders */
+.keys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;width:100%}
+.key{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 8px;
+  border:1px solid var(--line);border-radius:16px;background:var(--surface);transition:.25s}
+.key svg{width:34px;height:34px;fill:none;stroke:var(--dim);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:.25s}
+.key b{font-size:clamp(12px,1.8vh,15px);font-weight:600}
+.key small{font:500 10px/1 var(--mono);letter-spacing:.12em;color:var(--dim)}
+.key.on{border-color:var(--teal);background:var(--surface-2);box-shadow:0 0 30px rgba(44,196,179,.28)}
+.key.on svg{stroke:var(--teal)}
+.key.on small{color:var(--teal)}
+.quorum{font:600 clamp(26px,4.4vh,44px)/1 var(--mono)}
+.quorum span{color:var(--teal)}
+
+/* mining */
+.term{width:100%;text-align:left;font:500 clamp(12px,1.9vh,16px)/1.7 var(--mono);color:var(--muted);
+  background:rgba(4,18,27,.8);border:1px solid var(--line);border-radius:16px;padding:20px 24px;min-height:150px}
+.term .ok{color:var(--teal)} .term .hot{color:var(--pop)}
+.big{font:600 clamp(26px,5vh,52px)/1 var(--mono);letter-spacing:.02em}
+.hashline{font:500 clamp(11px,2.2vh,20px)/1.4 var(--mono);word-break:break-all;color:var(--muted)}
+.hashline .z{color:var(--pop);font-weight:600}
+.bar{width:100%;height:6px;border-radius:99px;background:var(--surface);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--grad)}
+
+/* sealed block */
+.block{width:100%;text-align:left;border:1px solid var(--teal);border-radius:18px;background:var(--surface);
+  padding:clamp(16px,3vh,28px);box-shadow:0 0 50px rgba(44,196,179,.2)}
+.block .tag{font:600 11px/1 var(--mono);letter-spacing:.18em;color:var(--teal);margin-bottom:12px;display:block}
+.block p{margin:0 0 14px;font-size:clamp(14px,2.3vh,21px);line-height:1.5}
+.block .kv{font:500 clamp(11px,1.8vh,14px)/1.6 var(--mono);color:var(--muted);word-break:break-all}
+.block .kv b{color:var(--text);font-weight:500}
+.diff{color:var(--pop)}
+.tamper{display:none;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.tamper.on{display:block}
+
+/* curtain */
+.curtain{position:fixed;inset:0;z-index:20;pointer-events:none;display:flex;visibility:hidden}
+body.live .curtain{visibility:visible}
+.curtain div{flex:1;background:
+   linear-gradient(90deg,rgba(0,0,0,.35),transparent 30%,transparent 70%,rgba(0,0,0,.35)),
+   repeating-linear-gradient(90deg,#0a2130 0 36px,#0d293b 36px 72px);
+  transition:transform 2.2s cubic-bezier(.7,0,.2,1);display:grid;place-items:center}
+.curtain .l{transform-origin:left;border-right:2px solid var(--teal)}
+.curtain .r{border-left:2px solid var(--teal)}
+body.open .curtain .l{transform:translateX(-101%)}
+body.open .curtain .r{transform:translateX(101%)}
+#fx{position:fixed;inset:0;z-index:30;pointer-events:none}
+.banner{position:fixed;left:50%;bottom:clamp(18px,5vh,48px);transform:translateX(-50%) translateY(30px);z-index:31;opacity:0;
+  background:rgba(4,18,27,.92);border:1px solid var(--teal);border-radius:999px;padding:14px 26px;font:600 clamp(13px,2vh,18px)/1.2 var(--mono);
+  color:var(--text);transition:.7s;white-space:nowrap;box-shadow:0 0 50px rgba(44,196,179,.3)}
+.banner b{color:var(--teal)}
+.banner.on{opacity:1;transform:translateX(-50%)}
+
+@media (max-width:700px){
+  .keys{grid-template-columns:repeat(2,1fr)}
+  .keys .key:last-child{grid-column:1/-1}
+  .stage{align-items:start;padding-top:70px;overflow:auto}
+  .banner{white-space:normal;text-align:center;width:calc(100% - 28px);border-radius:18px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+
+<iframe id="site" src="index.html" title="B-RIG website" loading="eager"></iframe>
+
+<div class="hud">
+  <span><b>B&#8209;RIG</b> &middot; INAUGURAL CEREMONY</span>
+  <span id="hudr" style="display:flex;gap:8px"><button id="bFull" type="button">Fullscreen</button><button id="bMute" type="button">Sound on</button></span>
+</div>
+
+<main class="stage" id="stage">
+
+  <!-- 1 · idle -->
+  <section class="scene on" data-scene="idle">
+    <img class="mark" src="assets/img/logos/brig-mark.png" alt="B-RIG">
+    <span class="eyebrow"><i></i>Awaiting authorisation</span>
+    <h1>Blockchain Research<br><em>Interest Group</em></h1>
+    <p class="sub">TIFAC-CORE in Cyber Security &middot; Amrita Vishwa Vidyapeetham, Coimbatore</p>
+    <div class="guest"><small>CHIEF GUEST</small><strong><span id="gRank"></span> <span id="gName"></span></strong></div>
+    <button class="btn" id="bArm" type="button">Begin the ceremony</button>
+    <span class="hint">Space / Enter &middot; click</span>
+  </section>
+
+  <!-- 2 · keyholders -->
+  <section class="scene" data-scene="keys">
+    <span class="eyebrow"><i></i>Key ceremony</span>
+    <h1>Any <em>3 of 5</em> keyholders<br>unlock the genesis block</h1>
+    <div class="keys" id="keys"></div>
+    <div class="quorum"><span id="qn">0</span> / 3 keys</div>
+    <button class="btn off" id="bMine" type="button">Mine the genesis block</button>
+    <span class="hint">Tap a key &middot; or press 1&ndash;5 &middot; N to skip</span>
+  </section>
+
+  <!-- 3 · mining -->
+  <section class="scene" data-scene="mine">
+    <span class="eyebrow"><i></i>Mining &middot; block #000</span>
+    <div class="term" id="term"></div>
+    <div class="big" id="nonce">nonce 0</div>
+    <div class="hashline" id="hash">&nbsp;</div>
+    <div class="bar"><i id="prog"></i></div>
+  </section>
+
+  <!-- 4 · sealed -->
+  <section class="scene" data-scene="seal">
+    <span class="eyebrow"><i></i>Block #000 confirmed</span>
+    <h1>The club is <em>sealed on-chain</em></h1>
+    <div class="block">
+      <span class="tag">GENESIS BLOCK &middot; SHA-256 &middot; DIFFICULTY 4</span>
+      <p id="msg"></p>
+      <div class="kv">nonce <b id="sNonce"></b><br>hash <b id="sHash"></b></div>
+      <div class="tamper" id="tamper">
+        <div class="kv">Change <span class="diff">one letter</span> of the message&hellip;<br>
+        <span id="tMsg"></span><br>hash <b id="tHash"></b><br>
+        <span class="diff" id="tCount"></span></div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="bTamper" type="button">Try to tamper (T)</button>
+      <button class="btn" id="bLaunch" type="button">Launch the website</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="curtain" aria-hidden="true"><div class="l"></div><div class="r"></div></div>
+<canvas id="fx"></canvas>
+<div class="banner" id="banner"><b>B-RIG is live</b> &middot; rohit-jr.github.io/B-RIG</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------- EDIT THESE ---------------- */
+  var CHIEF_GUEST = { rank: 'Major General', name: 'Chief Guest Name' };   // <- replace with the real name
+  var DATE_TEXT   = '13 October 2026';
+  var KEYHOLDERS  = [
+    { label: 'Chief Guest',         sub: CHIEF_GUEST.rank + ' ' + CHIEF_GUEST.name },
+    { label: 'Director',            sub: 'Amrita' },
+    { label: 'Faculty Coordinator', sub: 'TIFAC-CORE' },
+    { label: 'Club Lead',           sub: 'B-RIG' },
+    { label: 'Member',              sub: 'B-RIG' }
+  ];
+  var QUORUM = 3, ZEROS = 4;
+  /* -------------------------------------------- */
+
+  var MESSAGE = 'Blockchain Research Interest Group, TIFAC-CORE in Cyber Security, Amrita Vishwa Vidyapeetham, Coimbatore ' +
+                '— inaugurated by ' + CHIEF_GUEST.rank + ' ' + CHIEF_GUEST.name + ' on ' + DATE_TEXT + '.';
+
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  /* ---- pure-JS SHA-256 (works on file:// and http, no secure context needed) ---- */
+  var K = new Uint32Array([
+    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,
+    0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,
+    0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,
+    0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
+  function rotr(x, n) { return (x >>> n) | (x << (32 - n)); }
+  function sha256(str) {
+    var bytes = new TextEncoder().encode(str), l = bytes.length;
+    var padded = new Uint8Array(((l + 9 + 63) >> 6) << 6);
+    padded.set(bytes); padded[l] = 0x80;
+    var dv = new DataView(padded.buffer);
+    dv.setUint32(padded.length - 8, Math.floor(l * 8 / 4294967296));
+    dv.setUint32(padded.length - 4, (l * 8) >>> 0);
+    var h = new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);
+    var w = new Uint32Array(64);
+    for (var off = 0; off < padded.length; off += 64) {
+      for (var i = 0; i < 16; i++) w[i] = dv.getUint32(off + i * 4);
+      for (i = 16; i < 64; i++) {
+        var s0 = rotr(w[i-15],7) ^ rotr(w[i-15],18) ^ (w[i-15] >>> 3);
+        var s1 = rotr(w[i-2],17) ^ rotr(w[i-2],19) ^ (w[i-2] >>> 10);
+        w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0;
+      }
+      var a=h[0],b=h[1],c=h[2],d=h[3],e=h[4],f=h[5],g=h[6],hh=h[7];
+      for (i = 0; i < 64; i++) {
+        var S1 = rotr(e,6) ^ rotr(e,11) ^ rotr(e,25);
+        var ch = (e & f) ^ (~e & g);
+        var t1 = (hh + S1 + ch + K[i] + w[i]) | 0;
+        var S0 = rotr(a,2) ^ rotr(a,13) ^ rotr(a,22);
+        var mj = (a & b) ^ (a & c) ^ (b & c);
+        var t2 = (S0 + mj) | 0;
+        hh=g; g=f; f=e; e=(d + t1) | 0; d=c; c=b; b=a; a=(t1 + t2) | 0;
+      }
+      h[0]=(h[0]+a)|0; h[1]=(h[1]+b)|0; h[2]=(h[2]+c)|0; h[3]=(h[3]+d)|0;
+      h[4]=(h[4]+e)|0; h[5]=(h[5]+f)|0; h[6]=(h[6]+g)|0; h[7]=(h[7]+hh)|0;
+    }
+    var out = '';
+    for (i = 0; i < 8; i++) out += ('00000000' + (h[i] >>> 0).toString(16)).slice(-8);
+    return out;
+  }
+
+  /* ---- find the real nonce up front so on-stage timing is deterministic ---- */
+  var TARGET = new Array(ZEROS + 1).join('0');
+  var FINAL_NONCE = 0, FINAL_HASH = '';
+  (function () {
+    for (var n = 0; n < 5e6; n++) {
+      var hx = sha256(MESSAGE + '|' + n);
+      if (hx.indexOf(TARGET) === 0) { FINAL_NONCE = n; FINAL_HASH = hx; return; }
+    }
+  })();
+
+  /* ---- sound (needs the first click; the "Begin" button is that gesture) ---- */
+  var AC = null, muted = false;
+  function beep(freq, dur, type, vol, when) {
+    if (muted || !AC) return;
+    var t = AC.currentTime + (when || 0), o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.08, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + dur + 0.05);
+  }
+  function initAudio() {
+    try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch (e) {}
+  }
+
+  /* ---- state machine ---- */
+  var order = ['idle', 'keys', 'mine', 'seal', 'live'];
+  var state = 'idle';
+  function show(name) {
+    state = name;
+    $$('.scene').forEach(function (s) { s.classList.toggle('on', s.getAttribute('data-scene') === name); });
+  }
+
+  $('#gRank').textContent = CHIEF_GUEST.rank;
+  $('#gName').textContent = CHIEF_GUEST.name;
+  $('#msg').textContent = MESSAGE;
+
+  /* keys */
+  var keysEl = $('#keys'), down = {};
+  var lockSvg = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  KEYHOLDERS.forEach(function (k, i) {
+    var b = document.createElement('button');
+    b.className = 'key'; b.type = 'button';
+    b.innerHTML = lockSvg + '<b>' + k.label + '</b><small>KEY ' + (i + 1) + ' &middot; SEALED</small>';
+    b.addEventListener('click', function () { toggleKey(i); });
+    keysEl.appendChild(b);
+  });
+  function toggleKey(i) {
+    if (state !== 'keys') return;
+    var el = keysEl.children[i];
+    down[i] = !down[i];
+    el.classList.toggle('on', !!down[i]);
+    el.querySelector('small').innerHTML = 'KEY ' + (i + 1) + ' &middot; ' + (down[i] ? 'TURNED' : 'SEALED');
+    beep(down[i] ? 740 : 440, .14, 'triangle', .1);
+    var n = Object.keys(down).filter(function (x) { return down[x]; }).length;
+    $('#qn').textContent = n;
+    $('#bMine').classList.toggle('off', n < QUORUM);
+    if (n === QUORUM && down[i]) { beep(988, .3, 'sine', .1, .1); beep(1318, .4, 'sine', .1, .22); }
+  }
+
+  /* mining animation: counts up to the real nonce, showing the real hash each frame */
+  function mine() {
+    if (state !== 'keys') return;
+    show('mine');
+    var term = $('#term'), lines = [
+      '<span class="ok">&gt;</span> authorising ' + Math.max(QUORUM, 3) + '-of-' + KEYHOLDERS.length + ' keyholder quorum &hellip; <span class="ok">ok</span>',
+      '<span class="ok">&gt;</span> sealing inaugural message &hellip;',
+      '<span class="ok">&gt;</span> difficulty ' + ZEROS + ' &middot; target <span class="hot">' + TARGET + '&hellip;</span>',
+      '<span class="ok">&gt;</span> mining block #000 &hellip;'
+    ], li = 0;
+    term.innerHTML = '';
+    var lt = setInterval(function () {
+      if (li >= lines.length) { clearInterval(lt); return; }
+      term.innerHTML += lines[li++] + '<br>'; beep(520 + li * 90, .08, 'square', .04);
+    }, 520);
+
+    var DUR = 4600, t0 = performance.now(), done = false;
+    var timer = setInterval(function () {
+      var p = Math.min(1, (performance.now() - t0) / DUR), e = p * p * (3 - 2 * p);
+      var n = Math.floor(FINAL_NONCE * e);
+      var hx = p >= 1 ? FINAL_HASH : sha256(MESSAGE + '|' + n);
+      $('#nonce').textContent = 'nonce ' + n.toLocaleString('en-IN');
+      var z = 0; while (z < hx.length && hx[z] === '0') z++;
+      $('#hash').innerHTML = '<span class="z">' + hx.slice(0, z) + '</span>' + hx.slice(z);
+      $('#prog').style.width = (p * 100) + '%';
+      if (Math.random() < .35) beep(300 + Math.random() * 500, .03, 'square', .02);
+      if (p >= 1 && !done) {
+        done = true; clearInterval(timer); clearInterval(lt);
+        term.innerHTML += '<span class="ok">&gt; hash meets target &middot; block confirmed</span>';
+        beep(660, .25, 'sine', .12); beep(880, .25, 'sine', .12, .12); beep(1320, .5, 'sine', .12, .26);
+        setTimeout(seal, 1300);
+      }
+    }, 40);
+  }
+
+  function seal() {
+    $('#sNonce').textContent = FINAL_NONCE.toLocaleString('en-IN');
+    var z = 0; while (FINAL_HASH[z] === '0') z++;
+    $('#sHash').innerHTML = '<span class="diff">' + FINAL_HASH.slice(0, z) + '</span>' + FINAL_HASH.slice(z);
+    show('seal');
+    burst(120);
+  }
+
+  function tamper() {
+    if (state !== 'seal') return;
+    var altered = MESSAGE.replace('Blockchain', 'Blockchaim');
+    var hx = sha256(altered + '|' + FINAL_NONCE), changed = 0, out = '';
+    for (var i = 0; i < 64; i++) {
+      if (hx[i] !== FINAL_HASH[i]) { changed++; out += '<span class="diff">' + hx[i] + '</span>'; } else out += hx[i];
+    }
+    $('#tMsg').innerHTML = altered.replace('Blockchaim', '<span class="diff">Blockchaim</span>').slice(0, 90) + '&hellip;';
+    $('#tHash').innerHTML = out;
+    $('#tCount').textContent = changed + ' of 64 characters changed — and the block is no longer valid.';
+    $('#tamper').classList.add('on');
+    beep(180, .35, 'sawtooth', .07);
+  }
+
+  function launch() {
+    if (state !== 'seal') return;
+    state = 'live';
+    $('#site').style.visibility = 'visible';
+    document.body.classList.add('live');
+    $$('.scene').forEach(function (s) { s.classList.remove('on'); });
+    $('.hud').style.opacity = '0';
+    beep(392, 1, 'sine', .1); beep(523, 1, 'sine', .1, .15); beep(659, 1.2, 'sine', .1, .3); beep(784, 1.6, 'sine', .1, .45);
+    setTimeout(function () { document.body.classList.add('open'); }, 80);
+    setTimeout(function () { burst(220); }, 900);
+    setTimeout(function () { document.querySelector('.curtain').style.display = 'none'; }, 2600);
+    setTimeout(function () { $('#banner').classList.add('on'); }, 2200);
+    setTimeout(function () { $('#banner').classList.remove('on'); }, 11000);
+    document.querySelector('.curtain').style.pointerEvents = 'none';
+  }
+
+  function restart() { location.reload(); }
+
+  /* confetti */
+  var cv = $('#fx'), cx = cv.getContext('2d'), parts = [], run = false;
+  function size() { cv.width = innerWidth; cv.height = innerHeight; }
+  addEventListener('resize', size); size();
+  var COLORS = ['#2cc4b3', '#1f8fa6', '#ff5a3c', '#e9f4f4', '#18606c'];
+  function burst(n) {
+    for (var i = 0; i < n; i++) parts.push({
+      x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .55,
+      vx: (Math.random() - .5) * 16, vy: -Math.random() * 16 - 4, g: .32 + Math.random() * .2,
+      s: 4 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .4,
+      c: COLORS[(Math.random() * COLORS.length) | 0], life: 160 + Math.random() * 80
+    });
+    if (!run) { run = true; requestAnimationFrame(tick); }
+  }
+  function tick() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    parts = parts.filter(function (p) { return p.life > 0 && p.y < innerHeight + 30; });
+    parts.forEach(function (p) {
+      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= .99; p.r += p.vr; p.life--;
+      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c;
+      cx.globalAlpha = Math.min(1, p.life / 40); cx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); cx.restore();
+    });
+    if (parts.length) requestAnimationFrame(tick); else { run = false; cx.clearRect(0, 0, cv.width, cv.height); }
+  }
+
+  /* controls */
+  function primary() {
+    if (state === 'idle') { initAudio(); beep(523, .2, 'sine', .1); show('keys'); }
+    else if (state === 'keys') { if (!$('#bMine').classList.contains('off')) mine(); }
+    else if (state === 'seal') launch();
+  }
+  function skip() {
+    if (state === 'idle') { initAudio(); show('keys'); }
+    else if (state === 'keys') { for (var i = 0; i < QUORUM; i++) if (!down[i]) toggleKey(i); mine(); }
+    else if (state === 'seal') launch();
+  }
+  $('#bArm').addEventListener('click', primary);
+  $('#bMine').addEventListener('click', primary);
+  $('#bTamper').addEventListener('click', tamper);
+  $('#bLaunch').addEventListener('click', launch);
+  $('#bMute').addEventListener('click', function () { muted = !muted; this.textContent = muted ? 'Sound off' : 'Sound on'; });
+  function fs() { var d = document.documentElement; if (!document.fullscreenElement) (d.requestFullscreen || function () {}).call(d); else document.exitFullscreen(); }
+  $('#bFull').addEventListener('click', fs);
+
+  addEventListener('keydown', function (e) {
+    if (e.target && /input|textarea/i.test(e.target.tagName)) return;
+    var k = e.key.toLowerCase();
+    if (k === ' ' || k === 'enter') { e.preventDefault(); primary(); }
+    else if (k >= '1' && k <= '5') toggleKey(+k - 1);
+    else if (k === 'n') skip();
+    else if (k === 't') tamper();
+    else if (k === 'f') fs();
+    else if (k === 'm') $('#bMute').click();
+    else if (k === 'r') restart();
+    else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); location.href = 'index.html'; }
+  });
+})();
+</script>
+</body>
+</html>
