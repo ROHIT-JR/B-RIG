@@ -97,8 +97,6 @@ h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;back
 .block .kv{font:500 clamp(11px,1.8vh,14px)/1.6 var(--mono);color:var(--muted);word-break:break-all}
 .block .kv b{color:var(--text);font-weight:500}
 .diff{color:var(--pop)}
-.tamper{display:none;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
-.tamper.on{display:block}
 
 /* curtain */
 .curtain{position:fixed;inset:0;z-index:20;pointer-events:none;display:flex;visibility:hidden}
@@ -186,14 +184,8 @@ body.open .curtain .r{transform:translateX(101%)}
       <span class="tag">GENESIS BLOCK &middot; SHA-256 &middot; DIFFICULTY 4</span>
       <p id="msg"></p>
       <div class="kv">nonce <b id="sNonce"></b><br>hash <b id="sHash"></b></div>
-      <div class="tamper" id="tamper">
-        <div class="kv">Change <span class="diff">one letter</span> of the message&hellip;<br>
-        <span id="tMsg"></span><br>hash <b id="tHash"></b><br>
-        <span class="diff" id="tCount"></span></div>
-      </div>
     </div>
     <div class="row">
-      <button class="btn ghost" id="bTamper" type="button">Try to tamper (T)</button>
       <button class="btn" id="bLaunch" type="button">Launch the website</button>
     </div>
   </section>
@@ -370,20 +362,6 @@ body.open .curtain .r{transform:translateX(101%)}
     burst();
   }
 
-  function tamper() {
-    if (state !== 'seal') return;
-    var altered = MESSAGE.replace('Blockchain', 'Blockchaim');
-    var hx = sha256(altered + '|' + FINAL_NONCE), changed = 0, out = '';
-    for (var i = 0; i < 64; i++) {
-      if (hx[i] !== FINAL_HASH[i]) { changed++; out += '<span class="diff">' + hx[i] + '</span>'; } else out += hx[i];
-    }
-    $('#tMsg').innerHTML = altered.replace('Blockchaim', '<span class="diff">Blockchaim</span>').slice(0, 90) + '&hellip;';
-    $('#tHash').innerHTML = out;
-    $('#tCount').textContent = changed + ' of 64 characters changed — and the block is no longer valid.';
-    $('#tamper').classList.add('on');
-    beep(180, .35, 'sawtooth', .07);
-  }
-
   function launch() {
     if (state !== 'seal') return;
     state = 'live';
@@ -425,7 +403,6 @@ body.open .curtain .r{transform:translateX(101%)}
   }
   $('#bArm').addEventListener('click', primary);
   $('#bMine').addEventListener('click', primary);
-  $('#bTamper').addEventListener('click', tamper);
   $('#bLaunch').addEventListener('click', launch);
   $('#bMute').addEventListener('click', function () { muted = !muted; this.textContent = muted ? 'Sound off' : 'Sound on'; });
   function fs() { var d = document.documentElement; if (!document.fullscreenElement) (d.requestFullscreen || function () {}).call(d); else document.exitFullscreen(); }
@@ -437,7 +414,6 @@ body.open .curtain .r{transform:translateX(101%)}
     if (k === ' ' || k === 'enter') { e.preventDefault(); primary(); }
     else if (k >= '1' && k <= String(KEYHOLDERS.length)) toggleKey(+k - 1);
     else if (k === 'n') skip();
-    else if (k === 't') tamper();
     else if (k === 'f') fs();
     else if (k === 'm') $('#bMute').click();
     else if (k === 'r') restart();
