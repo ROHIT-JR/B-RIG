@@ -163,11 +163,7 @@ svg { display: block; }
   padding-bottom: 12px;
 }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font: 600 13px/1 var(--mono); letter-spacing: .16em; white-space: nowrap; }
-.brand img { width: 52px; height: 52px; display: block; }
-.brand .logo-light { background: var(--chip-bg); padding: 3px; border-radius: 9px; }
-.brand .logo-light, .logos img.logo-light { display: none; }
-:root[data-theme="light"] .brand .logo-light, :root[data-theme="light"] .logos img.logo-light { display: block; }
-:root[data-theme="light"] .brand .logo-dark, :root[data-theme="light"] .logos img.logo-dark { display: none; }
+.brand img { width: 50px; height: 50px; display: block; background: var(--chip-bg); padding: 4px; border-radius: 12px; }
 .nav { display: flex; gap: 4px; margin-left: 12px; }
 .nav a { padding: 8px 14px; border-radius: 999px; color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; border: 1px solid transparent; }
 .nav a:hover { color: var(--text); }
@@ -326,7 +322,6 @@ svg { display: block; }
 footer { border-top: 1px solid var(--line-soft); padding: 36px 0 calc(40px + env(safe-area-inset-bottom)); }
 .logos { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 28px; }
 .logos img { height: 48px; width: auto; max-width: 100%; background: var(--chip-bg); padding: 8px 12px; border-radius: 10px; box-sizing: content-box; }
-.logos img.logo-dark { background: none; padding: 0; height: 104px; }
 
 .flinks { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 14px; }
 .flinks a { color: var(--muted); display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
@@ -372,7 +367,6 @@ footer { border-top: 1px solid var(--line-soft); padding: 36px 0 calc(40px + env
 @media (max-width: 640px) {
   body { font-size: 15px; padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
   .topbar { gap: 10px; padding-top: 12px; padding-bottom: 6px; }
-  .brand img { width: 50px; height: 50px; }
   .topbar-end { order: 2; }
   .nav { order: 3; flex: 1 0 100%; margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
   .nav a { flex: 1; text-align: center; padding: 10px 8px; }
