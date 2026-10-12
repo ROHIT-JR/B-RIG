@@ -20,7 +20,8 @@
   --serif: 'Instrument Serif', Georgia, 'Iowan Old Style', 'Times New Roman', serif;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 8px;
-  --wrap: 820px;
+  --wrap: 1320px;
+  --gutter: clamp(16px, 4vw, 40px);
 }
 
 * { box-sizing: border-box; }
@@ -130,7 +131,7 @@ body[data-state="live"] .chain { animation: rise .7s ease both; }
   gap: 12px;
   max-width: var(--wrap);
   margin: 0 auto;
-  padding: 18px 20px;
+  padding: 18px var(--gutter);
   font-size: 11px;
   letter-spacing: 0.08em;
 }
@@ -141,6 +142,8 @@ body[data-state="live"] .chain { animation: rise .7s ease both; }
    accessible name, and announcing both would stutter. */
 .brand {
   display: inline-flex;
+  white-space: nowrap;
+  flex: none;
   align-items: center;
   gap: 9px;
   color: var(--ink);
@@ -151,12 +154,13 @@ body[data-state="live"] .chain { animation: rise .7s ease both; }
    chip the footer marks get — otherwise it reads as a white box dropped on
    the grey canvas. */
 .brand img {
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
   display: block;
+  flex: none;
   background: #fff;
   padding: 3px;
-  border-radius: 5px;
+  border-radius: 7px;
   box-sizing: content-box;
 }
 
@@ -166,16 +170,17 @@ body[data-state="live"] .chain { animation: rise .7s ease both; }
 .instband {
   max-width: var(--wrap);
   margin: 0 auto;
-  padding: 0 20px 16px;
+  padding: 0 var(--gutter) 16px;
   border-bottom: 1px solid var(--line-dim);
   margin-bottom: 20px;
 }
 .instband img {
-  height: 30px;
+  height: 38px;
   width: auto;
+  max-width: 100%;
   display: block;
   background: #fff;
-  padding: 7px 11px;
+  padding: 8px 12px;
   border-radius: 6px;
   box-sizing: content-box;
 }
@@ -202,7 +207,7 @@ body[data-state="live"] .chain { animation: rise .7s ease both; }
   box-sizing: content-box;
 }
 
-main { max-width: var(--wrap); margin: 0 auto; padding: 0 20px 40px; }
+main { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter) 40px; }
 
 .block {
   border: 1px solid var(--line);
@@ -228,7 +233,7 @@ main { max-width: var(--wrap); margin: 0 auto; padding: 0 20px 40px; }
    made it the darker of the two, which read backwards, and any grey pale
    enough to recede failed AA at 11px. */
 .tag-n, .tag-ok, .tag-pending { color: var(--ink); }
-.bbody { padding: 26px 22px; }
+.bbody { padding: clamp(20px, 3vw, 40px); }
 .bfoot {
   padding: 9px 16px;
   background: var(--chrome);
@@ -241,7 +246,7 @@ main { max-width: var(--wrap); margin: 0 auto; padding: 0 20px 40px; }
 .dim-link { background: var(--line-dim); }
 
 .kicker { font-size: 11px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 14px; text-transform: uppercase; }
-.title { font-size: clamp(40px, 8vw, 66px); margin-bottom: 14px; }
+.title { font-size: clamp(38px, 8vw, 76px); margin-bottom: 14px; }
 .lede { color: var(--muted); font-size: 16px; max-width: 54ch; margin-bottom: 26px; }
 
 .when { display: flex; flex-wrap: wrap; gap: 28px; margin-bottom: 26px; }
@@ -320,16 +325,17 @@ main { max-width: var(--wrap); margin: 0 auto; padding: 0 20px 40px; }
 .closing { margin-top: 26px; text-align: center; }
 .closing .cta { justify-content: center; }
 
-footer { max-width: var(--wrap); margin: 0 auto; padding: 36px 20px 56px; border-top: 1px solid var(--line-dim); }
+footer { max-width: var(--wrap); margin: 0 auto; padding: 36px var(--gutter) 56px; border-top: 1px solid var(--line-dim); }
 .logos { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-bottom: 30px; }
 /* The institutional marks stay in full colour — they are not ours to
    restyle. White chips frame them as official marks rather than letting
    them read as stray colour in a monochrome page. */
 .logos img {
-  height: 38px;
+  height: 44px;
   width: auto;
+  max-width: 100%;
   background: #fff;
-  padding: 8px 11px;
+  padding: 8px 12px;
   border-radius: 6px;
   box-sizing: content-box;
 }
@@ -404,12 +410,12 @@ footer { max-width: var(--wrap); margin: 0 auto; padding: 36px 20px 56px; border
 .topbar { gap: 20px; }
 a.brand { text-decoration: none; }
 a.brand:hover { text-decoration: none; opacity: .75; }
-.nav { display: flex; gap: 18px; margin-right: auto; }
+.nav { display: flex; gap: 22px; margin-right: auto; white-space: nowrap; }
 .nav a {
   font-size: 13px;
   color: var(--muted);
   letter-spacing: 0;
-  padding-bottom: 2px;
+  padding: 6px 0;
   border-bottom: 1px solid transparent;
 }
 .nav a:hover { color: var(--text); text-decoration: none; border-bottom-color: var(--line); }
@@ -417,15 +423,15 @@ a.brand:hover { text-decoration: none; opacity: .75; }
 
 /* ---------- club homepage ---------- */
 
-.home main { max-width: var(--wrap); margin: 0 auto; padding: 0 20px 40px; }
+.home main { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter) 40px; }
 
 .hsection { padding: 40px 0; border-bottom: 1px solid var(--line-dim); }
 .hsection:last-child { border-bottom: 0; }
 .eyebrow { font-size: 11px; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; margin-bottom: 10px; }
 
 .hhero { padding-top: 24px; }
-.htitle { font-size: clamp(36px, 6.4vw, 58px); line-height: 1.08; margin-bottom: 18px; }
-.hhero .lede { margin-bottom: 0; max-width: 62ch; }
+.htitle { font-size: clamp(34px, 7.4vw, 72px); line-height: 1.08; margin-bottom: 18px; }
+.hhero .lede { margin-bottom: 0; max-width: 62ch; font-size: clamp(16px, 1.3vw, 18px); }
 
 .eventcard {
   display: flex;
@@ -465,7 +471,29 @@ a.brand:hover { text-decoration: none; opacity: .75; }
 .hcta p { color: var(--muted); max-width: 48ch; margin-left: auto; margin-right: auto; }
 
 @media (max-width: 560px) {
-  .nav { gap: 14px; }
-  .eventcard { padding: 20px; }
-  .ec-side { flex-direction: row; align-items: center; }
+  /* Brand + nav on one row; the location/chain-height tag drops to its own
+     line below instead of squeezing the nav into wrapped words. */
+  .topbar { flex-wrap: wrap; gap: 8px 16px; padding-top: 14px; padding-bottom: 8px; }
+  .topbar > .mono.dim { order: 3; flex: 1 0 100%; font-size: 10px; }
+  .nav { gap: 16px; margin-right: 0; margin-left: auto; }
+  .nav a { font-size: 14px; }
+  .instband { padding-bottom: 14px; margin-bottom: 8px; }
+  .instband img { height: 32px; }
+  .logos { gap: 12px; }
+  .logos img { height: 40px; }
+  .eventcard { padding: 20px; gap: 18px; }
+  .ec-main { flex-basis: 100%; }
+  .ec-side { flex-direction: row; align-items: center; gap: 16px; }
+  .ec-title { font-size: 30px; }
+  .hsection { padding: 30px 0; }
+  .areas, .pcards, .fgrid { grid-template-columns: 1fr; }
+  .bhead { gap: 6px 14px; }
+}
+
+@media (min-width: 900px) {
+  .areas { grid-template-columns: repeat(3, 1fr); }
+  .fgrid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .hhero { padding-top: 56px; }
+  .ec-title { font-size: 40px; }
+  .eventcard { padding: 32px 36px; }
 }
