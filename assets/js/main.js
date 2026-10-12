@@ -110,7 +110,7 @@
     var w = $('#pcards');
     if (!w) return;
     w.innerHTML = PENDING.map(function (p) {
-      return '<div class="pending-card reveal"><span class="ps">PENDING</span>' +
+      return '<div class="pending-card reveal">' +
         '<h3>' + p.title + '</h3><span class="pd">' + p.when + '</span></div>';
     }).join('');
   }

@@ -301,6 +301,10 @@ svg { display: block; }
 .pending-card h3 { font-size: 18px; }
 .pending-card .pd { font: 400 13px var(--mono); color: var(--dim); }
 
+/* ---------- sponsors ---------- */
+
+.sponsor-slot { border: 1px dashed var(--line); border-radius: var(--radius); padding: clamp(22px, 4vw, 36px); display: flex; align-items: center; justify-content: center; gap: 16px; text-align: left; color: var(--muted); font-size: 17px; }
+
 /* ---------- closing CTA ---------- */
 
 .band {
