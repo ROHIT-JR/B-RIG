@@ -59,20 +59,20 @@ body.live .splash{visibility:visible;animation:in .8s .6s ease both}
 @keyframes in{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
 
 .mark{width:clamp(84px,14vh,132px);height:auto;background:#fff;border-radius:22px;padding:8px;box-shadow:0 0 60px var(--halo);border:1px solid var(--line)}
-.eyebrow{font:500 clamp(11px,1.5vh,13px)/1.4 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--teal)}
+.eyebrow{font:500 clamp(11px,1.5vh,13px)/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
 .eyebrow i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pop);margin-right:10px;box-shadow:0 0 12px var(--pop);animation:blink 1.4s infinite}
 @keyframes blink{50%{opacity:.3}}
-h1{margin:0;font-size:clamp(30px,6.2vh,64px);line-height:1.08;letter-spacing:-.03em;font-weight:700}
+h1{margin:0;font-family:var(--sans);font-size:clamp(30px,6.2vh,64px);line-height:1.1;letter-spacing:-.025em;font-weight:650}
 h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{margin:0;color:var(--muted);font-size:clamp(14px,2.1vh,20px);max-width:56ch}
+.sub{margin:0;color:var(--muted);font-family:var(--sans);font-weight:400;font-size:clamp(14px,2.1vh,20px);line-height:1.6;max-width:56ch}
 
 .guest{display:flex;flex-direction:column;gap:6px;padding:16px 30px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
-.guest small{font:500 11px/1 var(--mono);letter-spacing:.2em;color:var(--dim)}
-.guest strong{font-size:clamp(20px,3.4vh,32px);font-weight:600}
+.guest small{font:500 11px/1 var(--mono);letter-spacing:.14em;color:var(--dim)}
+.guest strong{font-size:clamp(20px,3.4vh,32px);font-weight:650;letter-spacing:-.02em}
 .guest span{color:var(--teal);font-weight:500}
 
 .btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  padding:clamp(14px,2.2vh,20px) clamp(26px,4vh,40px);border-radius:999px;font:700 clamp(15px,2.2vh,19px)/1 var(--sans);
+  padding:clamp(14px,2.2vh,20px) clamp(26px,4vh,40px);border-radius:999px;font:650 clamp(15px,2.2vh,19px)/1 var(--sans);
   color:var(--ink);background:var(--grad);box-shadow:0 10px 40px -8px var(--halo);animation:pulse 2.4s ease-in-out infinite}
 .btn:hover{filter:brightness(1.08)}
 .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none;animation:none}
