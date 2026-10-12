@@ -171,24 +171,121 @@
     }).catch(function () {});
   }
 
-  /* ---------- scroll reveal ---------- */
+  /* ---------- scroll motion ---------- */
+
+  var root = document.documentElement;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function scrollReveal() {
-    var targets = $$('.reveal, .tile, .stat, .band, .feature');
-    if (!('IntersectionObserver' in window)) {
-      targets.forEach(function (t) { t.classList.add('in'); });
-      return;
-    }
-    targets.forEach(function (t) { t.classList.add('reveal'); });
+    if (reduce || !('IntersectionObserver' in window)) return;   // content stays visible
+
+    var sel = '.section-head, .tile, .stat, .feature, .band, .pending-card, .sponsor-slot, .tl, .chips, .countdown, .micro';
+    var targets = $$(sel).filter(function (el) { return !el.closest('.hero'); });
+    targets.forEach(function (el) {
+      var card = el.classList.contains('tile') || el.classList.contains('stat') || el.classList.contains('pending-card');
+      el.setAttribute('data-rv', card ? 'tile' : '');
+    });
+    root.classList.add('reveal-ready');
+
+    var fired = false;
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e, i) {
+      fired = true;
+      var batch = 0;
+      entries.forEach(function (e) {
+        var el = e.target, r = e.boundingClientRect;
         if (e.isIntersecting) {
-          setTimeout(function () { e.target.classList.add('in'); }, i * 40);
-          io.unobserve(e.target);
+          // stagger siblings that arrive together, capped
+          el.style.setProperty('--d', Math.min(batch++, 4) * 65 + 'ms');
+          el.classList.add('in');
+          if (el.classList.contains('stat')) countUp(el);
+        } else if (r.top > window.innerHeight) {
+          // scrolled back UP until it left through the bottom edge: re-arm so it
+          // plays again when you come back down. Items that left through the
+          // top stay revealed. The 10% bottom rootMargin is the hysteresis.
+          el.style.setProperty('--d', '0ms');
+          el.classList.remove('in');
+        } else if (r.bottom < 0) {
+          el.classList.add('in');                                  // already above the fold on load / anchor jump
         }
       });
-    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
-    targets.forEach(function (t) { io.observe(t); });
+    }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
+    targets.forEach(function (el) { io.observe(el); });
+
+    // failsafe: if the observer never reports back, show everything
+    setTimeout(function () { if (!fired) root.classList.add('reveal-all'); }, 2500);
+
+    // keyboard focus must never land on something invisible
+    document.addEventListener('focusin', function (e) {
+      var rv = e.target.closest && e.target.closest('[data-rv]');
+      if (rv) rv.classList.add('in');
+    });
+    addEventListener('pageshow', function (e) {
+      if (!e.persisted) return;
+      targets.forEach(function (el) { if (el.getBoundingClientRect().bottom < 0) el.classList.add('in'); });
+    });
+  }
+
+  /* stats count up once, when first revealed */
+  var counted = [];
+  function countUp(card) {
+    var b = card.querySelector('.num b');
+    if (!b || reduce || counted.indexOf(b) > -1) return;
+    var m = /^(~?)(\d+)$/.exec(b.textContent.trim());
+    if (!m) return;
+    counted.push(b);
+    var prefix = m[1], end = parseInt(m[2], 10), t0 = performance.now(), dur = 1100;
+    (function tick(now) {
+      var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      b.textContent = prefix + Math.round(end * e);
+      if (p < 1) requestAnimationFrame(tick); else b.textContent = prefix + end;
+    })(t0);
+  }
+
+  /* scrubbed effects: progress bar, timeline fill + lit steps, hero parallax.
+     Pure functions of scroll position, so scrolling back reverses them. */
+  function scrubbed() {
+    var bar = document.createElement('div');
+    bar.className = 'progress'; bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<i></i>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    var barI = bar.firstChild;
+
+    var tl = $('#timeline'), fill = null, steps = [];
+    if (tl && tl.children.length) {
+      fill = document.createElement('div'); fill.className = 'tl-fill'; fill.setAttribute('aria-hidden', 'true');
+      tl.insertBefore(fill, tl.firstChild);
+      steps = $$('.tl', tl);
+    }
+    var viz = $('.chainviz svg');
+    var wide = window.matchMedia && matchMedia('(min-width: 900px)');
+    var ticking = false;
+
+    function update() {
+      ticking = false;
+      var y = Math.max(0, window.pageYOffset || 0);                       // clamp iOS rubber-banding
+      var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      barI.style.transform = 'scaleX(' + Math.min(1, y / max).toFixed(4) + ')';
+
+      if (fill) {
+        var r = tl.getBoundingClientRect(), vh = window.innerHeight;
+        var horizontal = wide && wide.matches;
+        // the line fills as the timeline passes up through the viewport
+        var p = Math.min(1, Math.max(0, (vh * 0.75 - r.top) / (horizontal ? vh * 0.4 : Math.max(1, r.height))));
+        fill.style.setProperty('--p', p.toFixed(3));
+        steps.forEach(function (li, i) {
+          var at = steps.length > 1 ? i / (steps.length - 1) : 0;
+          li.classList.toggle('lit', p > 0 && p >= at - 0.02);
+        });
+      }
+
+      if (viz && wide && wide.matches) {
+        viz.style.transform = 'translate3d(0,' + Math.min(40, y * 0.06).toFixed(1) + 'px,0)';   // gentle, capped
+      } else if (viz) { viz.style.transform = ''; }
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    update();
   }
 
   /* ---------- boot ---------- */
@@ -202,4 +299,5 @@
   setInterval(countdown, 1000);
   fingerprint();
   scrollReveal();
+  if (!reduce) scrubbed();
 })();

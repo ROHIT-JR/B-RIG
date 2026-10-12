@@ -334,10 +334,6 @@ footer { border-top: 1px solid var(--line-soft); padding: 36px 0 calc(40px + env
 
 .stickybar { display: none; }
 
-/* ---------- reveal ---------- */
-
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
-.reveal.in { opacity: 1; transform: none; }
 
 /* ---------- responsive ---------- */
 
@@ -402,5 +398,52 @@ footer { border-top: 1px solid var(--line-soft); padding: 36px 0 calc(40px + env
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .reveal { opacity: 1; transform: none; }
 }
+
+/* ==========================================================================
+   Scroll motion
+   - Content is visible by default. Elements are only hidden once JS has set
+     html.js AND html.reveal-ready, and only for users who have not asked for
+     reduced motion. If JS or IntersectionObserver fails, nothing stays hidden.
+   - Everything animates transform/opacity only.
+   - Reveals replay when you scroll back up past an item and return (re-armed
+     in main.js); scrubbed effects (progress bar, timeline fill, hero parallax)
+     simply follow the scroll position, so they reverse by themselves.
+   ========================================================================== */
+
+html { scroll-padding-bottom: 96px; }
+
+.progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60; pointer-events: none; }
+.progress i { display: block; height: 100%; background: var(--grad); transform-origin: left; transform: scaleX(0); }
+
+.timeline { position: relative; }
+.tl-fill { position: absolute; left: -1px; top: 0; bottom: 0; width: 2px; background: var(--grad); transform-origin: top; transform: scaleY(var(--p, 0)); pointer-events: none; }
+.tl.lit::before { background: var(--accent); border-color: var(--accent); }
+.tl.lit .tl-title { color: var(--text); }
+@media (min-width: 900px) {
+  .tl-fill { left: 0; right: 0; top: -1px; bottom: auto; width: auto; height: 2px; transform-origin: left; transform: scaleX(var(--p, 0)); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* hero: load-in sequence, plain CSS so it never depends on the observer */
+  .hero > div:first-child > * { animation: rise .8s cubic-bezier(.16, 1, .3, 1) both; }
+  .hero > div:first-child > *:nth-child(1) { animation-delay: .05s; }
+  .hero > div:first-child > *:nth-child(2) { animation-delay: .15s; }
+  .hero > div:first-child > *:nth-child(3) { animation-delay: .25s; }
+  .hero > div:first-child > *:nth-child(4) { animation-delay: .35s; }
+  .hero > div:first-child > *:nth-child(5) { animation-delay: .45s; }
+  .hero > div:first-child > *:nth-child(6) { animation-delay: .55s; }
+  .hero > .chainviz { animation: rise .9s cubic-bezier(.16, 1, .3, 1) .3s both; }
+  @keyframes rise { from { opacity: 0; transform: translate3d(0, 22px, 0); } to { opacity: 1; transform: none; } }
+
+  /* section reveals */
+  html.js.reveal-ready [data-rv] {
+    transition: opacity .56s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms), transform .56s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms);
+  }
+  html.js.reveal-ready:not(.reveal-all) [data-rv]:not(.in) { opacity: 0; transform: translate3d(0, var(--rv-y, 24px), 0); }
+  html.js.reveal-ready:not(.reveal-all) [data-rv="tile"]:not(.in) { transform: translate3d(0, 20px, 0) scale(.98); }
+
+  .chainviz svg { will-change: transform; }
+}
+@media (max-width: 640px) { :root { --rv-y: 16px; } }
+@media print { [data-rv] { opacity: 1 !important; transform: none !important; } }
