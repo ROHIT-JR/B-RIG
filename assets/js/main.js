@@ -55,7 +55,7 @@
   function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', t === 'light' ? '#ffffff' : '#04121b');
+    if (meta) meta.setAttribute('content', t === 'light' ? '#C6C4BE' : '#04121b');
     var btn = $('#theme-toggle');
     if (btn) {
       btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
