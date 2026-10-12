@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#04121b">
+<script>
+/* ?theme=light|dark wins, else the choice saved by the site's toggle, else dark */
+(function(){try{var q=(location.search.match(/theme=(light|dark)/)||[])[1],t=q||localStorage.getItem('brig-theme');
+if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);if(q)localStorage.setItem('brig-theme',q);}}catch(e){}})();
+</script>
 <title>B-RIG — Inaugural ceremony</title>
 <link rel="icon" href="assets/img/logos/brig.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,17 +21,27 @@
   --text:#e9f4f4; --muted:#9fb8bf; --dim:#7fa0a9;
   --teal:#2cc4b3; --steel:#1f8fa6; --pop:#ff5a3c;
   --grad:linear-gradient(135deg,#2cc4b3,#1f8fa6);
+  --ink:#031a1a; --glow:rgba(44,196,179,.22); --glow2:rgba(240,36,0,.10); --grid:rgba(44,196,179,.06);
+  --halo:rgba(44,196,179,.28); --term:rgba(4,18,27,.8); --curtA:#0a2130; --curtB:#0d293b;
   --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+html[data-theme="light"]{
+  --bg:#ffffff; --surface:#f3f8f8; --surface-2:#e7f0f1; --line:#cfe0e2;
+  --text:#0b2530; --muted:#3f5d68; --dim:#55727c;
+  --teal:#0e7c70; --steel:#18606c; --pop:#d63316;
+  --grad:linear-gradient(135deg,#0f8579,#18606c);
+  --ink:#ffffff; --glow:rgba(15,133,121,.16); --glow2:rgba(240,36,0,.05); --grid:rgba(11,37,48,.045);
+  --halo:rgba(15,133,121,.22); --term:rgba(243,248,248,.95); --curtA:#e7f0f1; --curtB:#dbe9ea;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;
   background:
-   radial-gradient(60% 45% at 80% -5%,rgba(44,196,179,.22),transparent 70%),
-   radial-gradient(45% 35% at 5% 100%,rgba(240,36,0,.10),transparent 70%),
-   linear-gradient(rgba(44,196,179,.06) 1px,transparent 1px) 0 0/46px 46px,
-   linear-gradient(90deg,rgba(44,196,179,.06) 1px,transparent 1px) 0 0/46px 46px}
+   radial-gradient(60% 45% at 80% -5%,var(--glow),transparent 70%),
+   radial-gradient(45% 35% at 5% 100%,var(--glow2),transparent 70%),
+   linear-gradient(var(--grid) 1px,transparent 1px) 0 0/46px 46px,
+   linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/46px 46px}
 
 /* sits under the curtain; revealed when it opens, then we redirect to the real site */
 .splash{visibility:hidden;position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px}
@@ -43,7 +58,7 @@ body.live .splash{visibility:visible;animation:in .8s .6s ease both}
 .scene.on{display:flex;animation:in .6s ease both}
 @keyframes in{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
 
-.mark{width:clamp(84px,14vh,132px);height:auto;background:#fff;border-radius:22px;padding:8px;box-shadow:0 0 60px rgba(44,196,179,.28)}
+.mark{width:clamp(84px,14vh,132px);height:auto;background:#fff;border-radius:22px;padding:8px;box-shadow:0 0 60px var(--halo);border:1px solid var(--line)}
 .eyebrow{font:500 clamp(11px,1.5vh,13px)/1.4 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--teal)}
 .eyebrow i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pop);margin-right:10px;box-shadow:0 0 12px var(--pop);animation:blink 1.4s infinite}
 @keyframes blink{50%{opacity:.3}}
@@ -58,11 +73,11 @@ h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;back
 
 .btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;
   padding:clamp(14px,2.2vh,20px) clamp(26px,4vh,40px);border-radius:999px;font:700 clamp(15px,2.2vh,19px)/1 var(--sans);
-  color:#031a1a;background:var(--grad);box-shadow:0 10px 40px -8px rgba(44,196,179,.55);animation:pulse 2.4s ease-in-out infinite}
+  color:var(--ink);background:var(--grad);box-shadow:0 10px 40px -8px var(--halo);animation:pulse 2.4s ease-in-out infinite}
 .btn:hover{filter:brightness(1.08)}
 .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none;animation:none}
 .btn[disabled],.btn.off{opacity:.35;pointer-events:none;animation:none}
-@keyframes pulse{50%{box-shadow:0 0 0 10px rgba(44,196,179,0),0 10px 50px -4px rgba(44,196,179,.75)}}
+@keyframes pulse{50%{box-shadow:0 0 0 10px transparent,0 10px 50px -4px var(--halo)}}
 .row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .hint{font:400 12px/1.5 var(--mono);color:var(--dim)}
 
@@ -73,7 +88,7 @@ h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;back
 .key svg{width:34px;height:34px;fill:none;stroke:var(--dim);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:.25s}
 .key b{font-size:clamp(12px,1.8vh,15px);font-weight:600}
 .key small{font:500 10px/1 var(--mono);letter-spacing:.12em;color:var(--dim)}
-.key.on{border-color:var(--teal);background:var(--surface-2);box-shadow:0 0 30px rgba(44,196,179,.28)}
+.key.on{border-color:var(--teal);background:var(--surface-2);box-shadow:0 0 30px var(--halo)}
 .key.on svg{stroke:var(--teal)}
 .key.on small{color:var(--teal)}
 .quorum{font:600 clamp(26px,4.4vh,44px)/1 var(--mono)}
@@ -81,7 +96,7 @@ h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;back
 
 /* mining */
 .term{width:100%;text-align:left;font:500 clamp(12px,1.9vh,16px)/1.7 var(--mono);color:var(--muted);
-  background:rgba(4,18,27,.8);border:1px solid var(--line);border-radius:16px;padding:20px 24px;min-height:150px}
+  background:var(--term);border:1px solid var(--line);border-radius:16px;padding:20px 24px;min-height:150px}
 .term .ok{color:var(--teal)} .term .hot{color:var(--pop)}
 .big{font:600 clamp(26px,5vh,52px)/1 var(--mono);letter-spacing:.02em}
 .hashline{font:500 clamp(11px,2.2vh,20px)/1.4 var(--mono);word-break:break-all;color:var(--muted)}
@@ -91,7 +106,7 @@ h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;back
 
 /* sealed block */
 .block{width:100%;text-align:left;border:1px solid var(--teal);border-radius:18px;background:var(--surface);
-  padding:clamp(16px,3vh,28px);box-shadow:0 0 50px rgba(44,196,179,.2)}
+  padding:clamp(16px,3vh,28px);box-shadow:0 0 50px var(--halo)}
 .block .tag{font:600 11px/1 var(--mono);letter-spacing:.18em;color:var(--teal);margin-bottom:12px;display:block}
 .block p{margin:0 0 14px;font-size:clamp(14px,2.3vh,21px);line-height:1.5}
 .block .kv{font:500 clamp(11px,1.8vh,14px)/1.6 var(--mono);color:var(--muted);word-break:break-all}
@@ -102,21 +117,21 @@ h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;back
 .curtain{position:fixed;inset:0;z-index:20;pointer-events:none;display:flex;visibility:hidden}
 body.live .curtain{visibility:visible}
 .curtain div{flex:1;background:
-   linear-gradient(90deg,rgba(0,0,0,.35),transparent 30%,transparent 70%,rgba(0,0,0,.35)),
-   repeating-linear-gradient(90deg,#0a2130 0 36px,#0d293b 36px 72px);
+   linear-gradient(90deg,rgba(0,0,0,.18),transparent 30%,transparent 70%,rgba(0,0,0,.18)),
+   repeating-linear-gradient(90deg,var(--curtA) 0 36px,var(--curtB) 36px 72px);
   transition:transform 2.2s cubic-bezier(.7,0,.2,1);display:grid;place-items:center}
 .curtain .l{transform-origin:left;border-right:2px solid var(--teal)}
 .curtain .r{border-left:2px solid var(--teal)}
 body.open .curtain .l{transform:translateX(-101%)}
 body.open .curtain .r{transform:translateX(101%)}
 .ring{position:fixed;left:50%;top:50%;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:50%;z-index:30;pointer-events:none;
-  border:1.5px solid var(--teal);box-shadow:0 0 40px rgba(44,196,179,.35),inset 0 0 30px rgba(44,196,179,.15);
+  border:1.5px solid var(--teal);box-shadow:0 0 40px var(--halo),inset 0 0 30px var(--glow);
   opacity:0;animation:ring 2.4s cubic-bezier(.2,.6,.2,1) forwards}
 @keyframes ring{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(26)}}
 .curtain .l::after,.curtain .r::after{content:"";position:absolute;top:0;bottom:0;width:60px;pointer-events:none}
 .curtain .l{position:relative}.curtain .r{position:relative}
-.curtain .l::after{right:0;background:linear-gradient(90deg,transparent,rgba(44,196,179,.35))}
-.curtain .r::after{left:0;background:linear-gradient(270deg,transparent,rgba(44,196,179,.35))}
+.curtain .l::after{right:0;background:linear-gradient(90deg,transparent,var(--halo))}
+.curtain .r::after{left:0;background:linear-gradient(270deg,transparent,var(--halo))}
 .banner{position:fixed;left:50%;bottom:clamp(18px,5vh,48px);transform:translateX(-50%) translateY(30px);z-index:31;opacity:0;
   background:rgba(4,18,27,.92);border:1px solid var(--teal);border-radius:999px;padding:14px 26px;font:600 clamp(13px,2vh,18px)/1.2 var(--mono);
   color:var(--text);transition:.7s;white-space:nowrap;box-shadow:0 0 50px rgba(44,196,179,.3)}
@@ -141,7 +156,7 @@ body.open .curtain .r{transform:translateX(101%)}
 
 <div class="hud">
   <span><b>B&#8209;RIG</b> &middot; INAUGURAL CEREMONY</span>
-  <span id="hudr" style="display:flex;gap:8px"><button id="bFull" type="button">Fullscreen</button><button id="bMute" type="button">Sound on</button></span>
+  <span id="hudr" style="display:flex;gap:8px"><button id="bTheme" type="button">Light theme</button><button id="bFull" type="button">Fullscreen</button><button id="bMute" type="button">Sound on</button></span>
 </div>
 
 <main class="stage" id="stage">
@@ -407,6 +422,16 @@ body.open .curtain .r{transform:translateX(101%)}
   $('#bMute').addEventListener('click', function () { muted = !muted; this.textContent = muted ? 'Sound off' : 'Sound on'; });
   function fs() { var d = document.documentElement; if (!document.fullscreenElement) (d.requestFullscreen || function () {}).call(d); else document.exitFullscreen(); }
   $('#bFull').addEventListener('click', fs);
+  function setTheme(t, save) {
+    document.documentElement.setAttribute('data-theme', t);
+    $('#bTheme').textContent = t === 'light' ? 'Dark theme' : 'Light theme';
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', t === 'light' ? '#ffffff' : '#04121b');
+    if (save) { try { localStorage.setItem('brig-theme', t); } catch (e) {} }
+  }
+  setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark', false);
+  $('#bTheme').addEventListener('click', function () {
+    setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light', true);
+  });
 
   addEventListener('keydown', function (e) {
     if (e.target && /input|textarea/i.test(e.target.tagName)) return;
@@ -416,6 +441,7 @@ body.open .curtain .r{transform:translateX(101%)}
     else if (k === 'n') skip();
     else if (k === 'f') fs();
     else if (k === 'm') $('#bMute').click();
+    else if (k === 'l') $('#bTheme').click();
     else if (k === 'r') restart();
     else if (k === 'escape' && state === 'live') { document.body.classList.remove('live', 'open'); location.href = 'blockcatalyst.html'; }
   });
