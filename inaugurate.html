@@ -28,9 +28,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;
    linear-gradient(rgba(44,196,179,.06) 1px,transparent 1px) 0 0/46px 46px,
    linear-gradient(90deg,rgba(44,196,179,.06) 1px,transparent 1px) 0 0/46px 46px}
 
-/* the live site sits underneath everything and is only exposed by the curtain */
-#site{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg);visibility:hidden}
-body.live #site{visibility:visible}
+/* sits under the curtain; revealed when it opens, then we redirect to the real site */
+.splash{visibility:hidden;position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px}
+body.live .splash{visibility:visible;animation:in .8s .6s ease both}
 
 .stage{position:fixed;inset:0;display:grid;place-items:center;padding:clamp(16px,4vw,48px)}
 .hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
@@ -135,7 +135,11 @@ body.open .curtain .r{transform:translateX(101%)}
 </head>
 <body>
 
-<iframe id="site" src="index.html" title="B-RIG website" loading="eager"></iframe>
+<div class="splash" aria-live="polite">
+  <img class="mark" src="assets/img/logos/brig-mark.png" alt="">
+  <h1>B&#8209;RIG is <em>live</em></h1>
+  <p class="sub">Opening the website&hellip;</p>
+</div>
 
 <div class="hud">
   <span><b>B&#8209;RIG</b> &middot; INAUGURAL CEREMONY</span>
@@ -197,7 +201,6 @@ body.open .curtain .r{transform:translateX(101%)}
 </main>
 
 <div class="curtain" aria-hidden="true"><div class="l"></div><div class="r"></div></div>
-<div class="banner" id="banner"><b>B-RIG is live</b> &middot; rohit-jr.github.io/B-RIG</div>
 
 <script>
 (function () {
@@ -384,7 +387,6 @@ body.open .curtain .r{transform:translateX(101%)}
   function launch() {
     if (state !== 'seal') return;
     state = 'live';
-    $('#site').style.visibility = 'visible';
     document.body.classList.add('live');
     $$('.scene').forEach(function (s) { s.classList.remove('on'); });
     $('.hud').style.opacity = '0';
@@ -392,9 +394,7 @@ body.open .curtain .r{transform:translateX(101%)}
     setTimeout(function () { document.body.classList.add('open'); }, 80);
     setTimeout(function () { burst(); }, 900);
     setTimeout(function () { document.querySelector('.curtain').style.display = 'none'; }, 2600);
-    setTimeout(function () { $('#banner').classList.add('on'); }, 2200);
-    setTimeout(function () { $('#banner').classList.remove('on'); }, 7500);
-    setTimeout(function () { location.replace('index.html'); }, 9000);
+    setTimeout(function () { location.replace('index.html'); }, 4800);
     document.querySelector('.curtain').style.pointerEvents = 'none';
   }
 
