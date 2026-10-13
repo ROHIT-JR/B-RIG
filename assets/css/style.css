@@ -586,3 +586,31 @@ html { scroll-padding-bottom: 96px; }
 .tk-item b { color: var(--accent); font-weight: 600; }
 @keyframes tk { to { transform: translate3d(-50%, 0, 0); } }
 @media (prefers-reduced-motion: reduce) { .tk-track { animation: none; } }
+
+/* ==========================================================================
+   Hero title: letters rise in and resolve from hex noise, then a one-time
+   light sweep crosses the accent word. JS swaps the real heading back in
+   afterwards, so nothing animated is left in the DOM (and screen readers get
+   the plain heading via aria-label while it plays).
+   ========================================================================== */
+.hero h1.t-fx { animation: none !important; opacity: 1; transform: none; }
+.hero h1.t-fx .w { display: inline-block; white-space: nowrap; }
+.hero h1.t-fx .c {
+  position: relative; display: inline-block; color: transparent;
+  opacity: 0; transform: translate3d(0, .5em, 0);
+  animation: cIn .62s cubic-bezier(.16, 1, .3, 1) forwards;
+  animation-delay: calc(var(--i) * 30ms + 80ms);
+}
+.hero h1.t-fx .c::after { content: attr(data-f); position: absolute; left: 0; top: 0; color: var(--accent); font-family: var(--mono); font-size: .86em; line-height: 1.25; }
+.hero h1.t-fx .c.r { color: var(--text); }
+.hero h1.t-fx .g .c.r { color: var(--accent); }
+.hero h1.t-fx .c.r::after { content: none; }
+@keyframes cIn { to { opacity: 1; transform: none; } }
+
+@keyframes sweep { from { background-position: 160% 0; } to { background-position: -60% 0; } }
+html:not([data-theme="light"]) .grad-text.shine {
+  background-image: linear-gradient(105deg, var(--accent) 0 38%, #ffffff 50%, var(--accent-2) 62% 100%);
+  background-size: 260% 100%;
+  animation: sweep 1.6s cubic-bezier(.16, 1, .3, 1) .1s 1 both;
+}
+@media (prefers-reduced-motion: reduce) { .hero h1.t-fx .c { animation: none; opacity: 1; transform: none; } }

@@ -699,6 +699,63 @@
     });
   }
 
+
+  /* hero title: per-letter rise + hex-noise resolve, then a single shine */
+  function heroTitle() {
+    var h = $('.hero h1');
+    if (!h || rm || paused) return;
+    var original = h.innerHTML, full = h.textContent.replace(/\s+/g, ' ').trim();
+    var idx = 0, chars = [];
+
+    function words(text, wrap, grad) {
+      var parts = text.split(/(\s+)/);
+      parts.forEach(function (part) {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { wrap.appendChild(document.createTextNode(' ')); return; }
+        var w = document.createElement('span'); w.className = 'w' + (grad ? ' g' : '');
+        for (var k = 0; k < part.length; k++) {
+          var c = document.createElement('span');
+          c.className = 'c'; c.textContent = part[k];
+          c.style.setProperty('--i', idx++);
+          c.setAttribute('data-f', HEXA[(Math.random() * 16) | 0]);
+          w.appendChild(c); chars.push(c);
+        }
+        wrap.appendChild(w);
+      });
+    }
+    var frag = document.createDocumentFragment();
+    Array.prototype.forEach.call(h.childNodes, function (n) {
+      if (n.nodeType === 3) words(n.textContent, frag, false);
+      else if (n.nodeName === 'BR') frag.appendChild(document.createElement('br'));
+      else if (n.nodeType === 1) words(n.textContent, frag, n.classList.contains('grad-text'));
+    });
+    h.setAttribute('aria-label', full);
+    h.innerHTML = '';
+    h.appendChild(frag);
+    Array.prototype.forEach.call(h.children, function (el) { el.setAttribute('aria-hidden', 'true'); });
+    h.classList.add('t-fx');
+
+    var t0 = Date.now(), total = 80 + idx * 30 + 420 + 700;
+    var tm = setInterval(function () {
+      var now = Date.now() - t0;
+      chars.forEach(function (c, i) {
+        if (c.classList.contains('r')) return;
+        var start = 80 + i * 30, done = start + 420;
+        if (now >= done) c.classList.add('r');
+        else if (now >= start) c.setAttribute('data-f', HEXA[(Math.random() * 16) | 0]);
+      });
+      if (now >= total) {
+        clearInterval(tm);
+        h.innerHTML = original;
+        h.classList.remove('t-fx');
+        h.removeAttribute('aria-label');
+        var g = h.querySelector('.grad-text');
+        if (g) { g.classList.add('shine'); setTimeout(function () { g.classList.remove('shine'); }, 1900); }
+      }
+    }, 45);
+  }
+  var HEXA = '0123456789abcdef';
+
   /* a real pause control for the ambient loops (WCAG 2.2.2) */
   function motionToggle() {
     var host = $('.flinks');
@@ -726,6 +783,7 @@
   countdown();
   setInterval(countdown, 1000);
   fingerprint();
+  heroTitle();
   chainLinks();
   buildChain();
   heightChip();
