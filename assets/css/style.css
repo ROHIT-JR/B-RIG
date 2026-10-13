@@ -447,3 +447,80 @@ html { scroll-padding-bottom: 96px; }
 }
 @media (max-width: 640px) { :root { --rv-y: 16px; } }
 @media print { [data-rv] { opacity: 1 !important; transform: none !important; } }
+
+/* ==========================================================================
+   Blockchain motion
+   live hash-linked chain + tamper demo, chain-link connectors, mempool grid,
+   scrambled headings. transform/opacity only; paused off-screen, when the tab
+   is hidden, or when the visitor presses "Pause motion". Light theme carries
+   state by pattern and label rather than colour.
+   ========================================================================== */
+
+.lchain { width: 100%; max-width: 480px; margin-inline: auto; will-change: transform; }
+.lc-view { position: relative; overflow: hidden; height: calc(4 * var(--bh) + 3 * var(--bg-gap)); --bh: 86px; --bg-gap: 26px; }
+.lc-track { display: flex; flex-direction: column; gap: var(--bg-gap); transition: transform .62s cubic-bezier(.16, 1, .3, 1); }
+.lc-block {
+  position: relative; height: var(--bh); flex: none;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 16px; display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  font: 500 12px/1.35 var(--mono); color: var(--dim);
+  transition: border-color .3s ease, opacity .4s ease;
+}
+.lc-block::before { /* the link to the block above */
+  content: ""; position: absolute; left: 50%; top: calc(-1 * var(--bg-gap)); height: var(--bg-gap); width: 0;
+  border-left: 1.5px dashed var(--accent); opacity: .8;
+}
+.lc-block:first-child::before { display: none; }
+.lc-block b { color: var(--text); font-weight: 600; font-size: 13px; letter-spacing: .02em; display: flex; justify-content: space-between; gap: 8px; }
+.lc-block b em { font-style: normal; font-weight: 500; font-size: 11px; letter-spacing: .1em; color: var(--accent); }
+.lc-block .h { color: var(--muted); }
+.lc-block .z { color: var(--pop); font-weight: 600; }
+.lc-block.new { border-color: var(--pop); }
+.lc-block.bad {
+  border-color: var(--pop);
+  background-image: repeating-linear-gradient(135deg, transparent 0 8px, color-mix(in srgb, var(--pop) 16%, transparent) 8px 10px);
+}
+.lc-block.bad b em { color: var(--pop); }
+.lc-block.bad::before { border-left-color: var(--pop); border-left-style: dotted; }
+
+.lc-ctl { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.lc-status { font: 500 12px/1.3 var(--mono); letter-spacing: .06em; color: var(--dim); }
+.lc-status.bad { color: var(--pop); }
+.lc-btn {
+  all: unset; cursor: pointer; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line);
+  font: 500 12px/1 var(--mono); letter-spacing: .06em; color: var(--text); background: var(--surface);
+}
+.lc-btn:hover { border-color: var(--accent); }
+.lc-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* connector between page sections */
+.chain-link { height: 56px; display: flex; justify-content: center; align-items: stretch; pointer-events: none; }
+.chain-link i { display: block; width: 0; border-left: 1.5px dashed var(--line); position: relative; }
+.chain-link i::after { content: ""; position: absolute; left: -5px; bottom: -2px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+/* mempool -> block grid inside the closing band */
+.mempool { display: grid; grid-template-columns: repeat(8, 14px); gap: 6px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.mempool i { width: 14px; height: 14px; border-radius: 4px; background: var(--accent); opacity: .22; transform: scale(.7); transition: opacity .3s ease, transform .3s ease; }
+.mempool i.on { opacity: 1; transform: scale(1); }
+.mempool.sealed { border-color: var(--pop); }
+.mp-cap { font: 500 12px/1 var(--mono); letter-spacing: .1em; color: var(--dim); margin-top: -8px; }
+
+/* scrambled headings: the real text keeps the layout, the overlay animates */
+.sc-wrap { position: relative; display: inline-block; }
+.sc-real.hide { visibility: hidden; }
+.sc-fx { position: absolute; left: 0; top: 0; white-space: pre-wrap; color: var(--accent); pointer-events: none; }
+
+.motion-toggle {
+  all: unset; cursor: pointer; font: 500 12px/1 var(--mono); letter-spacing: .08em; color: var(--muted);
+  padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px;
+}
+.motion-toggle:hover { border-color: var(--accent); color: var(--text); }
+.motion-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .lc-view { --bh: 78px; --bg-gap: 22px; }
+  .lchain { max-width: 420px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lc-track { transition: none; }
+}

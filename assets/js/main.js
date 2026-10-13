@@ -179,7 +179,7 @@
   function scrollReveal() {
     if (reduce || !('IntersectionObserver' in window)) return;   // content stays visible
 
-    var sel = '.section-head, .tile, .stat, .feature, .band, .pending-card, .sponsor-slot, .tl, .chips, .countdown, .micro';
+    var sel = '.section-head, .tile, .stat, .feature, .band, .pending-card, .sponsor-slot, .tl, .chips, .countdown, .micro, .chain-link';
     var targets = $$(sel).filter(function (el) { return !el.closest('.hero'); });
     targets.forEach(function (el) {
       var card = el.classList.contains('tile') || el.classList.contains('stat') || el.classList.contains('pending-card');
@@ -198,6 +198,7 @@
           el.style.setProperty('--d', Math.min(batch++, 4) * 65 + 'ms');
           el.classList.add('in');
           if (el.classList.contains('stat')) countUp(el);
+          if (el.classList.contains('section-head')) scrambleHead(el);
         } else if (r.top > window.innerHeight) {
           // scrolled back UP until it left through the bottom edge: re-arm so it
           // plays again when you come back down. Items that left through the
@@ -256,7 +257,7 @@
       tl.insertBefore(fill, tl.firstChild);
       steps = $$('.tl', tl);
     }
-    var viz = $('.chainviz svg');
+    var viz = $('.chainviz .lchain') || $('.chainviz svg');
     var wide = window.matchMedia && matchMedia('(min-width: 900px)');
     var ticking = false;
 
@@ -288,6 +289,259 @@
     update();
   }
 
+  /* ---------- blockchain motion ---------- */
+
+  var paused = false;
+  try { paused = localStorage.getItem('brig-motion') === 'paused'; } catch (e) {}
+  var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // compact SHA-256 (sync, so mining a few hundred nonces is instant)
+  var SK = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  function rotr(x, n) { return (x >>> n) | (x << (32 - n)); }
+  function sha(str) {
+    var b = new TextEncoder().encode(str), l = b.length, pad = new Uint8Array(((l + 9 + 63) >> 6) << 6);
+    pad.set(b); pad[l] = 0x80;
+    var dv = new DataView(pad.buffer);
+    dv.setUint32(pad.length - 4, (l * 8) >>> 0);
+    var h = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19], w = new Array(64);
+    for (var o = 0; o < pad.length; o += 64) {
+      var i;
+      for (i = 0; i < 16; i++) w[i] = dv.getUint32(o + i * 4);
+      for (i = 16; i < 64; i++) {
+        var a0 = rotr(w[i-15],7) ^ rotr(w[i-15],18) ^ (w[i-15] >>> 3), a1 = rotr(w[i-2],17) ^ rotr(w[i-2],19) ^ (w[i-2] >>> 10);
+        w[i] = (w[i-16] + a0 + w[i-7] + a1) | 0;
+      }
+      var A=h[0],B=h[1],C=h[2],D=h[3],E=h[4],F=h[5],G=h[6],H=h[7];
+      for (i = 0; i < 64; i++) {
+        var t1 = (H + (rotr(E,6) ^ rotr(E,11) ^ rotr(E,25)) + ((E & F) ^ (~E & G)) + SK[i] + w[i]) | 0;
+        var t2 = ((rotr(A,2) ^ rotr(A,13) ^ rotr(A,22)) + ((A & B) ^ (A & C) ^ (B & C))) | 0;
+        H=G; G=F; F=E; E=(D + t1) | 0; D=C; C=B; B=A; A=(t1 + t2) | 0;
+      }
+      h[0]=(h[0]+A)|0; h[1]=(h[1]+B)|0; h[2]=(h[2]+C)|0; h[3]=(h[3]+D)|0; h[4]=(h[4]+E)|0; h[5]=(h[5]+F)|0; h[6]=(h[6]+G)|0; h[7]=(h[7]+H)|0;
+    }
+    return h.map(function (x) { return ('00000000' + (x >>> 0).toString(16)).slice(-8); }).join('');
+  }
+
+  var DIFF = '00';                                   // leading zeros a valid block needs
+  function mineBlock(n, prev, data) {
+    for (var nonce = 0; nonce < 100000; nonce++) {
+      var hx = sha(prev + '|' + n + '|' + data + '|' + nonce);
+      if (hx.indexOf(DIFF) === 0) return { n: n, prev: prev, data: data, nonce: nonce, hash: hx };
+    }
+    return { n: n, prev: prev, data: data, nonce: 0, hash: sha(prev + '|' + n + '|' + data + '|0') };
+  }
+  function short(hx) { return '0x' + hx.slice(0, 6) + '\u2026' + hx.slice(-4); }
+  function validAgainst(b, prevHash) {
+    return b.prev === prevHash && b.hash === sha(b.prev + '|' + b.n + '|' + b.data + '|' + b.nonce) && b.hash.indexOf(DIFF) === 0;
+  }
+
+  /* shared visibility gate: widget runs only while on-screen, tab visible, not paused */
+  function gate(el, onChange) {
+    var vis = true, state = { run: false };
+    function eval_() {
+      var run = vis && !document.hidden && !paused && !rm;
+      if (run !== state.run) { state.run = run; onChange(run); }
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { vis = es[es.length - 1].isIntersecting; eval_(); }, { threshold: 0.05 }).observe(el);
+    }
+    document.addEventListener('visibilitychange', eval_);
+    addEventListener('brig-motion', eval_);
+    eval_();
+    return state;
+  }
+
+  function buildChain() {
+    var host = $('.chainviz');
+    if (!host || rm) return;                       // keep the static graphic for reduced motion
+
+    var chain = [], tampered = -1, timer = null, busy = false;
+    var genesisPrev = '0'.repeat(64);
+    function push() {
+      var prev = chain.length ? chain[chain.length - 1].hash : genesisPrev;
+      var n = chain.length ? chain[chain.length - 1].n + 1 : 0;
+      var b = mineBlock(n, prev, 'tx batch ' + n);
+      chain.push(b); return b;
+    }
+    for (var i = 0; i < 4; i++) push();
+
+    host.removeAttribute('aria-hidden');
+    host.innerHTML =
+      '<div class="lchain" role="group" aria-label="Animated blockchain demo: each block stores the hash of the one before it">' +
+        '<div class="lc-view"><div class="lc-track" id="lcTrack"></div></div>' +
+        '<div class="lc-ctl"><span class="lc-status" id="lcStatus" aria-live="polite">chain valid</span>' +
+        '<button type="button" class="lc-btn" id="lcBtn">Tamper with a block</button></div>' +
+      '</div>';
+    var track = $('#lcTrack'), status = $('#lcStatus'), btn = $('#lcBtn');
+
+    function el(b, fresh) {
+      var d = document.createElement('div');
+      d.className = 'lc-block' + (fresh ? ' new' : '');
+      d.setAttribute('data-n', b.n);
+      d.innerHTML = '<b>BLOCK #' + String(b.n).padStart(3, '0') + '<em>VALID</em></b>' +
+        '<span class="h">prev ' + short(b.prev) + '</span>' +
+        '<span class="h">hash <span class="z">' + b.hash.slice(0, 2) + '</span>' + b.hash.slice(2, 6) + '\u2026' + b.hash.slice(-4) + '</span>';
+      return d;
+    }
+    function render() {
+      track.innerHTML = '';
+      chain.slice(-4).forEach(function (b) { track.appendChild(el(b, false)); });
+    }
+    render();
+
+    function appendBlock() {
+      if (busy || tampered > -1) return;
+      busy = true;
+      var b = push(), node = el(b, true);
+      track.appendChild(node);
+      var step = node.getBoundingClientRect().height + parseFloat(getComputedStyle(track).rowGap || 24);
+      track.style.transform = 'translate3d(0,' + (-step) + 'px,0)';
+      setTimeout(function () {
+        track.style.transition = 'none';
+        track.style.transform = 'none';
+        if (track.firstChild) track.removeChild(track.firstChild);
+        node.classList.remove('new');
+        void track.offsetHeight;
+        track.style.transition = '';
+        if (chain.length > 40) chain.splice(0, chain.length - 8);
+        busy = false;
+      }, 700);
+    }
+
+    function tamper() {
+      var vis = chain.slice(-4), idx = chain.length - 3;       // second visible block
+      tampered = idx;
+      chain[idx] = Object.assign({}, chain[idx], { data: chain[idx].data + ' (edited)' });
+      var nodes = $$('.lc-block', track);
+      status.textContent = 'tampered \u2014 verifying\u2026'; status.classList.add('bad');
+      var okPrev = chain[idx - 1] ? chain[idx - 1].hash : genesisPrev;
+      var visStart = chain.length - 4, k = 0;
+      nodes.forEach(function (node, j) {
+        var bi = visStart + j;
+        if (bi < idx) return;
+        setTimeout(function () {
+          node.classList.add('bad');
+          node.querySelector('em').textContent = 'INVALID';
+          var hs = node.querySelectorAll('.h')[1];
+          if (bi === idx) hs.innerHTML = 'hash <span class="z">\u2260</span> recomputed';
+        }, 120 * k++);
+      });
+      setTimeout(function () { status.textContent = 'chain broken at block #' + String(chain[idx].n).padStart(3, '0'); }, 120 * k + 100);
+      btn.textContent = 'Re-mine and repair';
+    }
+    function repair() {
+      var idx = tampered, visStart = chain.length - 4;
+      // re-mine the edited block and everything after it, so the chain is valid again
+      for (var i = idx; i < chain.length; i++) {
+        var prev = i === 0 ? genesisPrev : chain[i - 1].hash;
+        chain[i] = mineBlock(chain[i].n, prev, 'tx batch ' + chain[i].n);
+      }
+      var nodes = $$('.lc-block', track), k = 0;
+      nodes.forEach(function (node, j) {
+        var bi = visStart + j;
+        if (bi < idx) return;
+        setTimeout(function () {
+          var b = chain[bi];
+          var nn = el(b, false);
+          node.className = nn.className; node.innerHTML = nn.innerHTML;
+        }, 120 * k++);
+      });
+      setTimeout(function () { status.textContent = 'chain valid'; status.classList.remove('bad'); tampered = -1; }, 120 * k + 100);
+      btn.textContent = 'Tamper with a block';
+    }
+    btn.addEventListener('click', function () { if (tampered > -1) repair(); else tamper(); });
+
+    var g = gate(host, function (run) {
+      clearInterval(timer);
+      if (run) timer = setInterval(appendBlock, 4500);
+    });
+  }
+
+  /* chain-link connectors drawn between page sections */
+  function chainLinks() {
+    var main = $('main.wrap');
+    if (!main) return;
+    var secs = $$('main.wrap > .section');
+    secs.forEach(function (sec, i) {
+      if (i === 0) return;
+      var d = document.createElement('div');
+      d.className = 'chain-link'; d.setAttribute('aria-hidden', 'true');
+      d.innerHTML = '<i></i>';
+      main.insertBefore(d, sec);
+    });
+  }
+
+  /* hex-alphabet scramble-to-resolve, once per heading */
+  var HEX = '0123456789abcdef';
+  function scrambleHead(head) {
+    var h = head.querySelector('h2');
+    if (!h || h.getAttribute('data-sc') || rm || paused) return;
+    h.setAttribute('data-sc', '1');
+    var text = h.textContent, n = text.length;
+    h.innerHTML = '<span class="sc-wrap"><span class="sc-real hide">' + text + '</span><span class="sc-fx" aria-hidden="true"></span></span>';
+    var real = h.querySelector('.sc-real'), fx = h.querySelector('.sc-fx'), i = 0;
+    var tm = setInterval(function () {
+      var out = text.slice(0, i);
+      for (var j = i; j < n; j++) out += text[j] === ' ' ? ' ' : HEX[(Math.random() * 16) | 0];
+      fx.textContent = out;
+      if (i++ >= n) {
+        clearInterval(tm);
+        real.classList.remove('hide');
+        fx.remove();
+      }
+    }, 32);
+  }
+
+  /* mempool -> block grid in the closing band */
+  function buildMempool() {
+    var band = $('.band');
+    if (!band || rm) return;
+    var grid = document.createElement('div');
+    grid.className = 'mempool'; grid.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < 32; i++) grid.appendChild(document.createElement('i'));
+    var cap = document.createElement('div');
+    cap.className = 'mp-cap'; cap.setAttribute('aria-hidden', 'true');
+    band.insertBefore(cap, band.firstChild);
+    band.insertBefore(grid, band.firstChild);
+    var cells = $$('i', grid), blockNo = 1, count = 0, timer = null, hold = 0;
+    cap.textContent = 'mempool \u00b7 0 / 32 transactions';
+    function tick() {
+      if (hold > 0) {
+        if (--hold === 0) {
+          cells.forEach(function (c) { c.classList.remove('on'); });
+          grid.classList.remove('sealed'); count = 0; blockNo++;
+        }
+        return;
+      }
+      var add = 2 + ((Math.random() * 2) | 0);
+      for (var k = 0; k < add && count < 32; k++) cells[count++].classList.add('on');
+      cap.textContent = 'mempool \u00b7 ' + count + ' / 32 transactions';
+      if (count >= 32) {
+        grid.classList.add('sealed');
+        cap.textContent = 'block #' + String(blockNo).padStart(3, '0') + ' sealed';
+        hold = 7;
+      }
+    }
+    gate(band, function (run) { clearInterval(timer); if (run) timer = setInterval(tick, 220); });
+  }
+
+  /* a real pause control for the ambient loops (WCAG 2.2.2) */
+  function motionToggle() {
+    var host = $('.flinks');
+    if (!host || rm) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'motion-toggle';
+    function label() { b.textContent = paused ? 'Resume motion' : 'Pause motion'; b.setAttribute('aria-pressed', paused ? 'true' : 'false'); }
+    label();
+    b.addEventListener('click', function () {
+      paused = !paused;
+      try { localStorage.setItem('brig-motion', paused ? 'paused' : 'on'); } catch (e) {}
+      label();
+      dispatchEvent(new Event('brig-motion'));
+    });
+    host.appendChild(b);
+  }
+
   /* ---------- boot ---------- */
 
   wireTheme();
@@ -298,6 +552,10 @@
   countdown();
   setInterval(countdown, 1000);
   fingerprint();
+  chainLinks();
+  buildChain();
+  buildMempool();
+  motionToggle();
   scrollReveal();
   if (!reduce) scrubbed();
 })();
