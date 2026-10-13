@@ -355,7 +355,7 @@
     var host = $('.chainviz');
     if (!host || rm) return;                       // keep the static graphic for reduced motion
 
-    var chain = [], tampered = -1, timer = null, busy = false;
+    var chain = [], tampered = -1, timer = null, busy = false, mining = false;
     var genesisPrev = '0'.repeat(64);
     function push() {
       var prev = chain.length ? chain[chain.length - 1].hash : genesisPrev;
@@ -390,9 +390,26 @@
     render();
 
     function appendBlock() {
+      if (busy || tampered > -1 || mining) return;
+      mining = true;
+      var nextN = chain[chain.length - 1].n + 1, nonce = 0, t0 = Date.now();
+      var tk = setInterval(function () {
+        nonce += 37 + ((Math.random() * 400) | 0);
+        status.textContent = 'mining block #' + String(nextN).padStart(3, '0') + ' \u00b7 nonce ' + nonce.toLocaleString('en-IN');
+        if (Date.now() - t0 > 800) {
+          clearInterval(tk);
+          status.textContent = 'chain valid';
+          mining = false;
+          doAppend();
+        }
+      }, 60);
+    }
+
+    function doAppend() {
       if (busy || tampered > -1) return;
       busy = true;
       var b = push(), node = el(b, true);
+      dispatchEvent(new CustomEvent('brig-block', { detail: { n: b.n, hash: b.hash } }));
       track.appendChild(node);
       var step = node.getBoundingClientRect().height + parseFloat(getComputedStyle(track).rowGap || 24);
       track.style.transform = 'translate3d(0,' + (-step) + 'px,0)';
@@ -525,6 +542,163 @@
     gate(band, function (run) { clearInterval(timer); if (run) timer = setInterval(tick, 220); });
   }
 
+
+  /* live block-height chip in the header */
+  function heightChip() {
+    var host = $('.topbar-end');
+    if (!host || rm) return;
+    var c = document.createElement('span');
+    c.className = 'height-chip'; c.setAttribute('aria-hidden', 'true');
+    var h = 0;
+    function draw() { c.innerHTML = 'height <b>' + String(h).padStart(6, '0') + '</b>'; }
+    h = 120000 + ((Math.random() * 800) | 0);
+    draw();
+    host.insertBefore(c, host.firstChild);
+    addEventListener('brig-block', function () { h++; draw(); });
+  }
+
+  /* scrolling strip of recent block hashes */
+  function buildTicker() {
+    var hero = $('main.wrap > .hero');
+    if (!hero || rm) return;
+    var items = '', i, hx;
+    for (i = 0; i < 16; i++) {
+      hx = sha('ticker|' + i);
+      items += '<span class="tk-item"><b>0x' + hx.slice(0, 6) + '\u2026' + hx.slice(-4) + '</b> \u2192 block ' + (120000 + i) + ' \u00b7 ' + (20 + ((parseInt(hx.slice(0, 2), 16) % 180))) + ' tx</span>';
+    }
+    var tk = document.createElement('div');
+    tk.className = 'ticker'; tk.setAttribute('aria-hidden', 'true');
+    tk.innerHTML = '<div class="tk-track">' + items + items + '</div>';
+    hero.parentNode.insertBefore(tk, hero.nextSibling);
+    gate(tk, function (run) { tk.classList.toggle('run', run); });
+  }
+
+  /* cursor spotlight position for tiles (fine pointers only) */
+  function spotlight() {
+    if (!window.matchMedia || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var raf = 0, tx = null, ev = null;
+    document.addEventListener('pointermove', function (e) {
+      ev = e;
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = 0;
+        var tile = ev.target.closest && ev.target.closest('.tile');
+        if (!tile) return;
+        var r = tile.getBoundingClientRect();
+        tile.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+        tile.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+      });
+    }, { passive: true });
+  }
+
+  /* a tiny deterministic identicon from each track's hash */
+  function identicons() {
+    $$('#verts .tile').forEach(function (tile) {
+      var name = (tile.querySelector('h3') || {}).textContent || 'x';
+      var hx = sha('identicon|' + name), bits = '', i;
+      for (i = 0; i < 8; i++) bits += ('0000' + parseInt(hx[i], 16).toString(2)).slice(-4);
+      var cells = '', k = 0, x, y, on;
+      for (y = 0; y < 5; y++) {
+        for (x = 0; x < 3; x++) {
+          on = bits[k++ % bits.length] === '1';
+          if (!on) continue;
+          cells += '<rect x="' + x + '" y="' + y + '" width="1" height="1" rx=".15"/>';
+          if (x < 2) cells += '<rect x="' + (4 - x) + '" y="' + y + '" width="1" height="1" rx=".15"/>';
+        }
+      }
+      var svg = document.createElement('span');
+      svg.innerHTML = '<svg class="ident" viewBox="0 0 5 5" fill="currentColor" aria-hidden="true">' + cells + '</svg>';
+      tile.appendChild(svg.firstChild);
+    });
+  }
+
+  /* validator network drawn behind the closing band */
+  function buildNetwork() {
+    var band = $('.band');
+    if (!band || rm || !window.HTMLCanvasElement) return;
+    var cv = document.createElement('canvas');
+    cv.className = 'net-cv'; cv.setAttribute('aria-hidden', 'true');
+    band.insertBefore(cv, band.firstChild);
+    var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = 1;
+    var nodes = [], edges = [], packets = [];
+    var pal = { accent: '#2cc4b3', pop: '#ff5a3c', line: '#18414f' };
+    function readPalette() {
+      var cs = getComputedStyle(root);
+      pal.accent = cs.getPropertyValue('--accent').trim() || pal.accent;
+      pal.pop = cs.getPropertyValue('--pop').trim() || pal.pop;
+      pal.line = cs.getPropertyValue('--line').trim() || pal.line;
+    }
+    function layout() {
+      var r = band.getBoundingClientRect();
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = Math.max(1, r.width); H = Math.max(1, r.height);
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.max(12, Math.min(30, Math.round(W * H / 15000)));
+      nodes = []; edges = []; packets = [];
+      for (var i = 0; i < n; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, p: 0 });
+      var maxD = Math.min(170, Math.max(110, W / 6));
+      for (var a = 0; a < n; a++) for (var b = a + 1; b < n; b++) {
+        var dx = nodes[a].x - nodes[b].x, dy = nodes[a].y - nodes[b].y;
+        if (dx * dx + dy * dy < maxD * maxD) edges.push([a, b]);
+      }
+      for (var k = 0; k < Math.min(7, edges.length); k++) spawn();
+    }
+    function spawn() {
+      if (!edges.length) return;
+      var e = edges[(Math.random() * edges.length) | 0], fwd = Math.random() < .5;
+      packets.push({ a: fwd ? e[0] : e[1], b: fwd ? e[1] : e[0], t: Math.random(), v: .006 + Math.random() * .008 });
+    }
+    function step() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineWidth = 1; ctx.globalAlpha = .35; ctx.strokeStyle = pal.line;
+      ctx.beginPath();
+      edges.forEach(function (e) { ctx.moveTo(nodes[e[0]].x, nodes[e[0]].y); ctx.lineTo(nodes[e[1]].x, nodes[e[1]].y); });
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      packets.forEach(function (p, i) {
+        p.t += p.v;
+        var A = nodes[p.a], B = nodes[p.b];
+        if (p.t >= 1) {
+          B.p = 1;                                              // node pulses when a packet lands
+          // continue along a random neighbouring edge, else respawn
+          var opts = edges.filter(function (e) { return e[0] === p.b || e[1] === p.b; });
+          if (opts.length) { var e = opts[(Math.random() * opts.length) | 0]; p.a = p.b; p.b = e[0] === p.b ? e[1] : e[0]; p.t = 0; }
+          else { packets.splice(i, 1); spawn(); }
+          return;
+        }
+        ctx.fillStyle = pal.pop;
+        ctx.beginPath(); ctx.arc(A.x + (B.x - A.x) * p.t, A.y + (B.y - A.y) * p.t, 2.4, 0, 6.2832); ctx.fill();
+      });
+      nodes.forEach(function (n) {
+        ctx.fillStyle = pal.accent; ctx.globalAlpha = .9;
+        ctx.beginPath(); ctx.arc(n.x, n.y, 2.6, 0, 6.2832); ctx.fill();
+        if (n.p > 0.02) {
+          ctx.globalAlpha = n.p * .6; ctx.strokeStyle = pal.accent;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 3 + (1 - n.p) * 14, 0, 6.2832); ctx.stroke();
+          n.p *= .93;
+        }
+      });
+      ctx.globalAlpha = 1;
+    }
+    var raf = 0, last = 0;
+    function loop(now) {
+      raf = requestAnimationFrame(loop);
+      if (now - last < 33) return;                              // ~30 fps
+      last = now; step();
+    }
+    readPalette(); layout();
+    step();                                                     // one static frame for paused/off-screen
+    new MutationObserver(function () { readPalette(); step(); })
+      .observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    var rt = 0;
+    addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layout(); step(); }, 200); });
+    gate(band, function (run) {
+      cancelAnimationFrame(raf);
+      if (run) raf = requestAnimationFrame(loop);
+    });
+  }
+
   /* a real pause control for the ambient loops (WCAG 2.2.2) */
   function motionToggle() {
     var host = $('.flinks');
@@ -554,7 +728,12 @@
   fingerprint();
   chainLinks();
   buildChain();
+  heightChip();
+  buildTicker();
+  identicons();
+  spotlight();
   buildMempool();
+  buildNetwork();
   motionToggle();
   scrollReveal();
   if (!reduce) scrubbed();

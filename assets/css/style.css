@@ -524,3 +524,65 @@ html { scroll-padding-bottom: 96px; }
 @media (prefers-reduced-motion: reduce) {
   .lc-track { transition: none; }
 }
+
+/* ==========================================================================
+   More blockchain motion
+   validator network (canvas), orbiting CTA tracer, tile spotlight, hash
+   identicons, live block-height chip, scrolling hash ticker.
+   ========================================================================== */
+
+:root { --spot: rgba(44, 196, 179, .18); }
+:root[data-theme="light"] { --spot: rgba(255, 255, 255, .45); }
+
+/* validator network behind the closing band */
+.band { position: relative; overflow: hidden; }
+.band > *:not(.net-cv) { position: relative; z-index: 1; }
+.net-cv { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: .55; pointer-events: none; }
+
+/* orbiting tracer around the hero CTA (GitHub Universe-style, built original) */
+@property --ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero .btn-primary { position: relative; }
+  .hero .btn-primary::before {
+    content: ""; position: absolute; inset: -4px; border-radius: inherit; padding: 2px; pointer-events: none;
+    background: conic-gradient(from var(--ang), transparent 0 68%, var(--pop) 88%, transparent 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: orbit 3.4s linear infinite;
+  }
+  @keyframes orbit { to { --ang: 360deg; } }
+}
+
+/* cursor spotlight on tiles, fine pointers only */
+.tile::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--spot), transparent 70%);
+  transition: opacity .25s ease;
+}
+@media (hover: hover) and (pointer: fine) { .tile:hover::after { opacity: 1; } }
+
+/* hash identicon on each track tile */
+.ident { position: absolute; right: 14px; bottom: 14px; width: 30px; height: 30px; color: var(--accent); opacity: .7; }
+.tile .ident + * { }
+.tile:hover .ident { opacity: 1; }
+
+/* live block height chip in the header */
+.height-chip {
+  font: 500 11px/1 var(--mono); letter-spacing: .08em; color: var(--dim);
+  padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.height-chip b { color: var(--accent); font-weight: 600; }
+@media (max-width: 640px) { .height-chip { display: none; } }
+
+/* scrolling hash ticker */
+.ticker { overflow: hidden; border-block: 1px solid var(--line-soft); padding: 12px 0; margin-top: 8px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.tk-track { display: flex; gap: 36px; width: max-content; animation: tk 60s linear infinite; animation-play-state: paused; }
+.ticker.run .tk-track { animation-play-state: running; }
+.ticker:hover .tk-track { animation-play-state: paused; }
+.tk-item { font: 500 12px/1 var(--mono); letter-spacing: .06em; color: var(--dim); white-space: nowrap; }
+.tk-item b { color: var(--accent); font-weight: 600; }
+@keyframes tk { to { transform: translate3d(-50%, 0, 0); } }
+@media (prefers-reduced-motion: reduce) { .tk-track { animation: none; } }
