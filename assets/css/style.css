@@ -34,6 +34,7 @@
   --shine: #ffffff;
 
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display: 'Space Grotesk', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 14px;
   --wrap: 1200px;
@@ -104,7 +105,9 @@ body::before {
           mask-image: linear-gradient(#000 55%, rgba(0, 0, 0, .35));
 }
 
-h1, h2, h3 { font-family: var(--sans); font-weight: 650; letter-spacing: -0.025em; line-height: 1.1; margin: 0; }
+/* Space Grotesk for headings: distinctive geometric forms that stay sharp at
+   phone sizes; Inter carries body copy, JetBrains Mono the chain labels. */
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; margin: 0; }
 p { margin: 0; }
 a { color: var(--accent); text-underline-offset: 3px; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
@@ -199,7 +202,7 @@ svg { display: block; }
 .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--pop); box-shadow: 0 0 10px var(--pop); animation: blink 1.8s ease-in-out infinite; }
 @keyframes blink { 50% { opacity: .35; } }
 
-.hero h1 { font-size: clamp(38px, 7.6vw, 80px); margin: 18px 0 16px; }
+.hero h1 { font-size: clamp(34px, 7.6vw, 80px); margin: 18px 0 16px; }
 .grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero .sub { font-size: clamp(17px, 2vw, 21px); color: var(--muted); max-width: 34ch; }
 

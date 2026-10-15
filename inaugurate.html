@@ -14,7 +14,7 @@ if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t
 <link rel="icon" href="assets/img/logos/brig.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#04121b; --surface:#0a2130; --surface-2:#0f2c3e; --line:#18414f;
@@ -24,6 +24,7 @@ if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t
   --ink:#031a1a; --glow:rgba(44,196,179,.22); --glow2:rgba(240,36,0,.10); --grid:rgba(44,196,179,.06);
   --halo:rgba(44,196,179,.28); --term:rgba(4,18,27,.8); --curtA:#0a2130; --curtB:#0d293b;
   --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Space Grotesk','Inter',system-ui,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
 }
 html[data-theme="light"]{
@@ -62,7 +63,7 @@ body.live .splash{visibility:visible;animation:in .8s .6s ease both}
 .eyebrow{font:500 clamp(11px,1.5vh,13px)/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
 .eyebrow i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pop);margin-right:10px;box-shadow:0 0 12px var(--pop);animation:blink 1.4s infinite}
 @keyframes blink{50%{opacity:.3}}
-h1{margin:0;font-family:var(--sans);font-size:clamp(30px,6.2vh,64px);line-height:1.1;letter-spacing:-.025em;font-weight:650}
+h1{margin:0;font-family:var(--display);font-size:clamp(30px,6.2vh,64px);line-height:1.1;letter-spacing:-.025em;font-weight:700}
 h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{margin:0;color:var(--muted);font-family:var(--sans);font-weight:400;font-size:clamp(14px,2.1vh,20px);line-height:1.6;max-width:56ch}
 
