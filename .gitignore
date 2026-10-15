@@ -5,3 +5,6 @@ node_modules/
 
 # Local preview-server config, not part of the published site
 .claude/
+
+# Sponsor poster drafts, kept local
+poster/
