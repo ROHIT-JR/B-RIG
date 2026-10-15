@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlockCatalyst 2026 — Sponsorship Poster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   SYSTEM (declared before building)
+   Canvas   A4 portrait, 794 x 1123 css px (96dpi) -> prints edge to edge.
+   Type     Space Grotesk 700 display / Inter body / JetBrains Mono labels.
+            Floors: body 13px+, labels 11px+, hero 72px and 168px.
+   Colour   Two themes on one structure, switched by <html data-v>.
+            gold : navy + gold, the original poster, tightened.
+            teal : the website palette sampled from the B-RIG logo.
+   Rhythm   Every band is full-bleed with a 44px inner gutter; one hairline
+            rule style; chain motif (linked blocks) used for stats only.
+   Facts    Nothing here is invented: numbers, tracks, dates, contacts and the
+            QR target all come from the site / the original poster.
+   ========================================================================== */
+:root{
+  --bg:#08122b; --bg2:#0d1a3d; --panel:#101f47; --line:#2b3b6b;
+  --cream:#f6f1e6; --muted:#aab5d6; --gold:#e6b650; --gold-d:#c99a33; --ink:#08122b;
+  --hex:rgba(230,182,80,.30); --hex-hi:rgba(230,182,80,.75);
+}
+html[data-v="teal"]{
+  --bg:#04121b; --bg2:#071a26; --panel:#0a2130; --line:#18414f;
+  --cream:#e9f4f4; --muted:#9fb8bf; --gold:#2cc4b3; --gold-d:#1f9f90; --ink:#031a1a;
+  --hex:rgba(44,196,179,.28); --hex-hi:rgba(44,196,179,.8);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#555;font-family:'Inter',system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{display:flex;flex-direction:column;align-items:center;gap:14px;padding:14px 0 30px}
+
+.bar{display:flex;gap:8px;font:500 13px/1 'Inter',sans-serif}
+.bar button{padding:9px 16px;border-radius:999px;border:1px solid #888;background:#222;color:#eee;cursor:pointer}
+.bar button[aria-pressed="true"]{background:#eee;color:#111}
+
+.page{position:relative;width:794px;height:1123px;overflow:hidden;background:var(--bg);color:var(--cream);display:flex;flex-direction:column}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+.disp{font-family:'Space Grotesk','Inter',sans-serif}
+
+/* 1. logo band — white, because the institutional marks are drawn for white */
+.logos{height:90px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 44px;border-bottom:4px solid var(--gold);flex:none}
+.logos img{display:block;height:54px;width:auto}
+.logos .iic{height:58px}
+.logos .amr{height:50px}
+.logos .brg{height:70px}
+
+/* 2. hero */
+.hero{position:relative;flex:none;height:414px;padding:34px 44px 0;overflow:hidden;background:radial-gradient(70% 90% at 100% 0%,var(--bg2),var(--bg) 70%)}
+.hexbg{position:absolute;right:-30px;top:-10px;width:420px;height:300px;pointer-events:none}
+.kicker{position:relative;font:600 13px/1 'JetBrains Mono',monospace;letter-spacing:.22em;color:var(--gold);display:flex;align-items:center;gap:12px}
+.kicker::before{content:"";width:26px;height:2px;background:var(--gold)}
+.event{position:relative;font-size:58px;line-height:1;letter-spacing:-.035em;font-weight:700;margin-top:14px}
+.event b{color:var(--gold);font-weight:700}
+.become{position:relative;font-size:68px;line-height:.95;letter-spacing:-.04em;font-weight:700;margin-top:20px}
+.sponsor{position:relative;font-size:160px;line-height:.86;letter-spacing:-.05em;font-weight:700;color:var(--gold);margin-top:4px;margin-left:-6px}
+.tag{position:relative;font-size:19px;line-height:1.35;color:var(--muted);margin-top:30px;max-width:560px}
+.tag b{color:var(--cream);font-weight:600}
+.badge{position:absolute;right:44px;bottom:34px;text-align:right;font:600 12px/1.5 'JetBrains Mono',monospace;letter-spacing:.14em;color:var(--gold)}
+.badge span{display:block;color:var(--muted);font-weight:500}
+
+/* 3. the chain — four linked blocks */
+.chain{flex:none;display:flex;align-items:stretch;padding:0 44px;margin-top:2px;position:relative}
+.blk{flex:1;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);padding:14px 14px 12px;display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.link{flex:none;width:22px;align-self:center;height:2px;background:var(--gold);position:relative}
+.link::before,.link::after{content:"";position:absolute;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.link::before{left:-4px}.link::after{right:-4px}
+.blk svg{width:30px;height:30px;flex:none;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.blk .n{font-size:38px;line-height:1;font-weight:700;letter-spacing:-.03em}
+.blk .l{font:600 11px/1 'JetBrains Mono',monospace;letter-spacing:.16em;color:var(--muted);margin-top:5px}
+
+/* 4. tracks */
+.tracks{flex:none;padding:16px 44px 0}
+.sec{font:600 12px/1 'JetBrains Mono',monospace;letter-spacing:.24em;color:var(--gold);display:flex;align-items:center;gap:14px}
+.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.trk{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.trk span{font:500 13px/1 'Inter',sans-serif;padding:8px 13px;border:1px solid var(--line);border-radius:999px;background:var(--bg2);color:var(--cream)}
+.trk span.open{border-style:dashed;color:var(--gold);border-color:var(--gold-d)}
+
+/* 5. why sponsor */
+.why{flex:none;padding:16px 44px 0}
+.reasons{display:flex;justify-content:space-between;margin-top:12px}
+.rs{width:132px;text-align:center}
+.hx{width:54px;height:61px;margin:0 auto 8px;position:relative}
+.hx svg.h{position:absolute;inset:0;width:100%;height:100%}
+.hx svg.i{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;stroke:var(--gold);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.rs b{display:block;font:600 14px/1.25 'Inter',sans-serif}
+.rs p{font-size:12px;line-height:1.35;color:var(--muted);margin-top:3px}
+
+/* 6. when / where / who */
+.facts{flex:none;margin:16px 44px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex}
+.fc{flex:1;padding:10px 12px;display:flex;align-items:center;gap:12px}
+.fc+.fc{border-left:1px solid var(--line)}
+.fc svg{width:24px;height:24px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.fc small{display:block;font:600 11px/1 'JetBrains Mono',monospace;letter-spacing:.18em;color:var(--muted)}
+.fc b{display:block;font:600 17px/1.15 'Space Grotesk',sans-serif;letter-spacing:-.01em;margin-top:5px}
+
+/* 7. CTA footer */
+.cta{margin-top:auto;flex:none;background:var(--gold);color:var(--ink);display:flex;align-items:center;gap:26px;padding:14px 44px}
+.cta h3{font:700 40px/.95 'Space Grotesk',sans-serif;letter-spacing:-.04em}
+.cta h3+p{font-size:14px;margin-top:8px;font-weight:500}
+.cta .sep{width:1px;align-self:stretch;background:rgba(0,0,0,.28)}
+.contact{flex:1;display:flex;flex-direction:column;gap:9px}
+.contact div{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600}
+.contact div.m{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.contact svg{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.qr{flex:none;background:#fff;padding:9px 9px 6px;text-align:center;color:#111;border-radius:4px}
+.qr img{display:block;width:104px;height:104px}
+.qr span{display:block;font:600 9px/1 'JetBrains Mono',monospace;letter-spacing:.16em;margin-top:6px}
+.base{flex:none;background:var(--bg);color:var(--muted);font-size:11.5px;text-align:center;padding:11px 20px;letter-spacing:.02em}
+
+@page{size:210mm 297mm;margin:0}
+@media print{
+  html,body{background:none}
+  body{padding:0;gap:0;display:block}
+  .bar{display:none}
+  .page{width:210mm;height:297mm;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bar" role="group" aria-label="Colour theme">
+  <button type="button" data-set="gold" aria-pressed="true">Navy + gold</button>
+  <button type="button" data-set="teal" aria-pressed="false">Logo teal</button>
+</div>
+
+<main class="page" id="poster">
+
+  <header class="logos">
+    <img class="iic" src="../assets/img/logos/iic.jpg" alt="Institution's Innovation Council, Ministry of Education initiative">
+    <img class="amr" src="../assets/img/logos/amrita-tifac.png" alt="Amrita Vishwa Vidyapeetham — TIFAC-CORE in Cyber Security">
+    <img class="brg" src="../assets/img/logos/brig.png" alt="B-RIG, Blockchain Research Interest Group">
+  </header>
+
+  <section class="hero">
+    <svg class="hexbg" viewBox="0 0 420 300" aria-hidden="true">
+      <defs>
+        <g id="hx"><path d="M0-52 45-26V26L0 52-45 26V-26Z" fill="none"/></g>
+      </defs>
+      <g stroke="var(--hex)" stroke-width="1.4" fill="none">
+        <use href="#hx" x="300" y="70"/><use href="#hx" x="378" y="115"/><use href="#hx" x="222" y="115"/>
+        <use href="#hx" x="300" y="160"/><use href="#hx" x="378" y="25"/><use href="#hx" x="222" y="25"/>
+        <use href="#hx" x="144" y="70"/><use href="#hx" x="300" y="250"/><use href="#hx" x="144" y="160"/>
+      </g>
+      <g stroke="var(--hex-hi)" stroke-width="1.8" fill="none">
+        <use href="#hx" x="300" y="70"/><use href="#hx" x="378" y="115"/>
+      </g>
+      <circle cx="345" cy="94" r="4" fill="var(--gold)"/><circle cx="345" cy="46" r="4" fill="var(--gold)"/>
+    </svg>
+
+    <div class="kicker">24-HOUR BLOCKCHAIN INNOVATION HACKATHON</div>
+    <h1 class="disp event">BlockCatalyst <b>2026</b></h1>
+    <div class="disp become">Become a</div>
+    <div class="disp sponsor">sponsor.</div>
+    <p class="tag">Where blockchain ideas compete. <b>Your brand leads.</b></p>
+    <div class="badge">FIRST EDITION<span>19–20 DEC 2026</span></div>
+  </section>
+
+  <section class="chain" aria-label="At a glance">
+    <div class="blk">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <div><div class="n disp">24</div><div class="l">HOURS</div></div>
+    </div>
+    <div class="link"></div>
+    <div class="blk">
+      <svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>
+      <div><div class="n disp">7</div><div class="l">TRACKS</div></div>
+    </div>
+    <div class="link"></div>
+    <div class="blk">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6"/></svg>
+      <div><div class="n disp">4</div><div class="l">PER TEAM</div></div>
+    </div>
+    <div class="link"></div>
+    <div class="blk">
+      <svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h12l-2 4 2 4H5"/></svg>
+      <div><div class="n disp">2</div><div class="l">PHASES</div></div>
+    </div>
+  </section>
+
+  <section class="tracks">
+    <div class="sec">THE 7 TRACKS</div>
+    <div class="trk">
+      <span>Crypto &amp; blockchain forensics</span>
+      <span>OSINT &amp; blockchain</span>
+      <span>DApps</span>
+      <span>NFTs</span>
+      <span>Blockchain security</span>
+      <span>Metaverse</span>
+      <span class="open">Student innovation</span>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="sec">WHY SPONSOR</div>
+    <div class="reasons">
+      <div class="rs">
+        <div class="hx"><svg class="h" viewBox="0 0 64 72"><path d="M32 2 61 19v34L32 70 3 53V19Z" fill="var(--bg2)" stroke="var(--gold)" stroke-width="1.4"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></div>
+        <b>Brand exposure</b>
+      </div>
+      <div class="rs">
+        <div class="hx"><svg class="h" viewBox="0 0 64 72"><path d="M32 2 61 19v34L32 70 3 53V19Z" fill="var(--bg2)" stroke="var(--gold)" stroke-width="1.4"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M2 21a8 8 0 0 1 10.4-7.6"/><circle cx="18" cy="18" r="3"/><path d="m22 22-1.9-1.9"/></svg></div>
+        <b>Access to talent</b>
+      </div>
+      <div class="rs">
+        <div class="hx"><svg class="h" viewBox="0 0 64 72"><path d="M32 2 61 19v34L32 70 3 53V19Z" fill="var(--bg2)" stroke="var(--gold)" stroke-width="1.4"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></div>
+        <b>Network with tech leaders</b>
+      </div>
+      <div class="rs">
+        <div class="hx"><svg class="h" viewBox="0 0 64 72"><path d="M32 2 61 19v34L32 70 3 53V19Z" fill="var(--bg2)" stroke="var(--gold)" stroke-width="1.4"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
+        <b>Logo &amp; media features</b>
+      </div>
+      <div class="rs">
+        <div class="hx"><svg class="h" viewBox="0 0 64 72"><path d="M32 2 61 19v34L32 70 3 53V19Z" fill="var(--bg2)" stroke="var(--gold)" stroke-width="1.4"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></div>
+        <b>Collaborative opportunities</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="facts" aria-label="When, where, who">
+    <div class="fc">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <div><small>WHEN</small><b>19–20 Dec 2026</b></div>
+    </div>
+    <div class="fc">
+      <svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+      <div><small>WHERE</small><b>Amrita, Coimbatore</b></div>
+    </div>
+    <div class="fc">
+      <svg viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.500 6-3v-4.500"/></svg>
+      <div><small>WHO</small><b>UG &amp; PG students</b></div>
+    </div>
+  </section>
+
+  <footer class="cta">
+    <div>
+      <h3>Be the<br>catalyst.</h3>
+      <p>Let’s talk partnership.</p>
+    </div>
+    <div class="sep"></div>
+    <div class="contact">
+      <div class="m"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>brig@cb.amrita.edu</div>
+      <div><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6"/></svg>@brig.amrita</div>
+      <div><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Faculty coordinator: Ramaguru Radhakrishnan</div>
+    </div>
+    <div class="qr"><img src="qr-event-page.svg" alt="QR code linking to the BlockCatalyst 2026 event page"><span>SCAN · EVENT PAGE</span></div>
+  </footer>
+
+  <div class="base">Organised by B-RIG · TIFAC-CORE in Cyber Security · Amrita Vishwa Vidyapeetham, Coimbatore</div>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement, btns=[].slice.call(document.querySelectorAll('.bar button'));
+  function set(v){root.setAttribute('data-v',v);btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.set===v))});}
+  btns.forEach(function(b){b.addEventListener('click',function(){set(b.dataset.set);history.replaceState(null,'','#'+b.dataset.set);});});
+  set(location.hash==='#teal'?'teal':'gold');
+})();
+</script>
+</body>
+</html>

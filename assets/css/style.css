@@ -571,10 +571,9 @@ html { scroll-padding-bottom: 96px; }
 }
 @media (hover: hover) and (pointer: fine) { .tile:hover::after { opacity: 1; } }
 
-/* hash identicon on each track tile */
-.ident { position: absolute; right: 14px; bottom: 14px; width: 30px; height: 30px; color: var(--accent); opacity: .7; }
-.tile .ident + * { }
-.tile:hover .ident { opacity: 1; }
+/* hash fingerprint at the foot of each track tile */
+.tilehash { margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--line-soft); font-size: 11px; letter-spacing: .08em; color: var(--dim); transition: color .2s ease; }
+.tile:hover .tilehash { color: var(--accent); }
 
 /* live block height chip in the header */
 .height-chip {

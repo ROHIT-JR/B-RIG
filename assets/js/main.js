@@ -602,24 +602,17 @@
     }, { passive: true });
   }
 
-  /* a tiny deterministic identicon from each track's hash */
+  /* each track carries a short hash fingerprint, set in the flow of the tile
+     (not overlaid) so it can never collide with the description. */
   function identicons() {
     $$('#verts .tile').forEach(function (tile) {
       var name = (tile.querySelector('h3') || {}).textContent || 'x';
-      var hx = sha('identicon|' + name), bits = '', i;
-      for (i = 0; i < 8; i++) bits += ('0000' + parseInt(hx[i], 16).toString(2)).slice(-4);
-      var cells = '', k = 0, x, y, on;
-      for (y = 0; y < 5; y++) {
-        for (x = 0; x < 3; x++) {
-          on = bits[k++ % bits.length] === '1';
-          if (!on) continue;
-          cells += '<rect x="' + x + '" y="' + y + '" width="1" height="1" rx=".15"/>';
-          if (x < 2) cells += '<rect x="' + (4 - x) + '" y="' + y + '" width="1" height="1" rx=".15"/>';
-        }
-      }
-      var svg = document.createElement('span');
-      svg.innerHTML = '<svg class="ident" viewBox="0 0 5 5" fill="currentColor" aria-hidden="true">' + cells + '</svg>';
-      tile.appendChild(svg.firstChild);
+      var hx = sha('track|' + name).slice(0, 8);
+      var el = document.createElement('span');
+      el.className = 'tilehash mono';
+      el.setAttribute('aria-hidden', 'true');
+      el.textContent = '0x' + hx;
+      tile.appendChild(el);
     });
   }
 
