@@ -34,12 +34,12 @@
   ];
 
   var TIMELINE = [
-    { date: 'OCT 13', title: 'Page goes live', done: true },
+    { date: 'OCT 13', title: 'Page goes live', at: new Date('2026-10-13T04:30:00Z') },
     { date: 'NOV 14', title: 'Registration opens', at: REGISTRATION_OPEN },
-    { date: 'NOV 30', title: 'Idea submissions close' },
-    { date: 'EARLY DEC', title: 'Teams confirmed' },
+    { date: 'NOV 30', title: 'Idea submissions close', at: new Date('2026-11-30T18:29:00Z') },
+    { date: 'EARLY DEC', title: 'Teams confirmed', at: new Date('2026-12-05T06:30:00Z') },
     { date: 'DEC 19', title: 'Hacking begins', at: HACK_START },
-    { date: 'DEC 20', title: 'Demos and results' }
+    { date: 'DEC 20', title: 'Demos and results', at: new Date('2026-12-20T06:30:00Z') }
   ];
 
   var PENDING = [
@@ -55,7 +55,7 @@
   function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', t === 'light' ? '#C6C4BE' : '#04121b');
+    if (meta) meta.setAttribute('content', t === 'light' ? '#E3F0EF' : '#04121b');
     var btn = $('#theme-toggle');
     if (btn) {
       btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
@@ -98,7 +98,7 @@
     var now = Date.now();
     var nextMarked = false;
     ol.innerHTML = TIMELINE.map(function (t) {
-      var done = t.done || (t.at && now > t.at.getTime());
+      var done = !!(t.at && now >= t.at.getTime());
       var cls = 'tl' + (done ? ' done' : '');
       if (!done && !nextMarked) { cls += ' next'; nextMarked = true; }
       return '<li class="' + cls + '"><span class="tl-date">' + t.date + '</span>' +
@@ -257,6 +257,29 @@
       tl.insertBefore(fill, tl.firstChild);
       steps = $$('.tl', tl);
     }
+    /* The timeline follows the calendar, not the scroll position: the line
+       is filled up to today's place between the two nearest dates, and a step
+       is lit once its date has passed. Recomputed on resize and every minute. */
+    function placeTimeline() {
+      if (!fill) return;
+      var horizontal = wide && wide.matches, now = Date.now();
+      var size = horizontal ? tl.offsetWidth : tl.offsetHeight;
+      var pts = steps.map(function (li) { return horizontal ? li.offsetLeft : li.offsetTop + 6; });
+      var p = 0;
+      TIMELINE.forEach(function (t, i) {
+        var at = t.at.getTime();
+        steps[i].classList.toggle('lit', now >= at);
+        if (now >= at) p = pts[i];
+        else if (i > 0 && now > TIMELINE[i - 1].at.getTime()) {
+          var a0 = TIMELINE[i - 1].at.getTime();
+          p = pts[i - 1] + (pts[i] - pts[i - 1]) * ((now - a0) / (at - a0));
+        }
+      });
+      fill.style.setProperty('--p', Math.min(1, p / Math.max(1, size)).toFixed(4));
+    }
+    placeTimeline();
+    addEventListener('resize', placeTimeline);
+    setInterval(placeTimeline, 60000);
     var viz = $('.chainviz .lchain') || $('.chainviz svg');
     var wide = window.matchMedia && matchMedia('(min-width: 900px)');
     var ticking = false;
@@ -266,18 +289,6 @@
       var y = Math.max(0, window.pageYOffset || 0);                       // clamp iOS rubber-banding
       var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       barI.style.transform = 'scaleX(' + Math.min(1, y / max).toFixed(4) + ')';
-
-      if (fill) {
-        var r = tl.getBoundingClientRect(), vh = window.innerHeight;
-        var horizontal = wide && wide.matches;
-        // the line fills as the timeline passes up through the viewport
-        var p = Math.min(1, Math.max(0, (vh * 0.75 - r.top) / (horizontal ? vh * 0.4 : Math.max(1, r.height))));
-        fill.style.setProperty('--p', p.toFixed(3));
-        steps.forEach(function (li, i) {
-          var at = steps.length > 1 ? i / (steps.length - 1) : 0;
-          li.classList.toggle('lit', p > 0 && p >= at - 0.02);
-        });
-      }
 
       if (viz && wide && wide.matches) {
         viz.style.transform = 'translate3d(0,' + Math.min(40, y * 0.06).toFixed(1) + 'px,0)';   // gentle, capped
